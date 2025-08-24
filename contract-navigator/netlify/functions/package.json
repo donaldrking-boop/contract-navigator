@@ -1,0 +1,9 @@
+{
+  "name": "contract-navigator-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for Contract Navigator",
+  "dependencies": {
+    "stripe": "^13.0.0",
+    "@supabase/supabase-js": "^2.38.0"
+  }
+}
