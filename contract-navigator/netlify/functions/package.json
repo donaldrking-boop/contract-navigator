@@ -1,13 +1,17 @@
 {
-  "name": "contract-navigator-functions",
+  "name": "contract-navigator",
   "version": "1.0.0",
-  "description": "Netlify functions for Contract Navigator",
+  "description": "AI-Powered Contract Analysis Platform",
   "main": "index.js",
-  "dependencies": {
-    "stripe": "^13.0.0",
-    "@supabase/supabase-js": "^2.18.0"
+  "scripts": {
+    "build": "echo 'Build complete'",
+    "dev": "netlify dev"
   },
-  "engines": {
-    "node": "18.x"
-  }
+  "dependencies": {
+    "stripe": "^14.15.0",
+    "@supabase/supabase-js": "^2.38.5"
+  },
+  "keywords": ["contracts", "ai", "saas"],
+  "author": "Your Name",
+  "license": "MIT"
 }
