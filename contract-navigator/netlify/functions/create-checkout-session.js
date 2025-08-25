@@ -1,6 +1,8 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
 exports.handler = async (event, context) => {
+  // Debug logging
+  console.log('STRIPE_SECRET_KEY exists:', !!process.env.STRIPE_SECRET_KEY);
+  console.log('STRIPE_SECRET_KEY length:', process.env.STRIPE_SECRET_KEY ? process.env.STRIPE_SECRET_KEY.length : 'undefined');
+  
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -11,11 +13,14 @@ exports.handler = async (event, context) => {
   const { customer_name, customer_email, company } = JSON.parse(event.body);
 
   try {
+    // Initialize Stripe here instead of at the top
+    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
-          price: 'price_1RyrlZQqgAtFeSaKNS2uE13', // Your actual Stripe price ID
+          price: 'price_1RyrlZQqgAtFeSaKNS2uE13',
           quantity: 1,
         },
       ],
