@@ -22,12 +22,10 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // Handle the event
   switch (stripeEvent.type) {
     case 'checkout.session.completed':
       const session = stripeEvent.data.object;
       
-      // Create user account in Supabase
       try {
         const { data, error } = await supabase
           .from('profiles')
@@ -56,18 +54,11 @@ exports.handler = async (event, context) => {
     case 'customer.subscription.deleted':
       const subscription = stripeEvent.data.object;
       
-      // Update subscription status in Supabase
       try {
-        const { error } = await supabase
+        await supabase
           .from('profiles')
-          .update({ 
-            subscription_status: subscription.status 
-          })
+          .update({ subscription_status: subscription.status })
           .eq('subscription_id', subscription.id);
-
-        if (error) {
-          console.error('Error updating subscription status:', error);
-        }
       } catch (error) {
         console.error('Database error:', error);
       }
