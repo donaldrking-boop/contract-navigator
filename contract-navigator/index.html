@@ -117,24 +117,60 @@
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Welcome Back</h2>
+                <h2 class="text-2xl font-bold">Welcome to Contract Navigator</h2>
                 <button id="closeLogin" class="text-gray-500 hover:text-gray-700">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
-            <form id="loginForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" id="loginEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" id="loginPassword" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                </div>
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                    Sign In
-                </button>
-            </form>
+            
+            <!-- Sign In Form -->
+            <div id="signInForm">
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="loginEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="loginPassword" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <button type="submit" id="signInSubmit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        Sign In
+                    </button>
+                    <div class="text-center">
+                        <button type="button" id="showSignUp" class="text-blue-600 hover:text-blue-700 text-sm">
+                            Don't have an account? Sign up
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Sign Up Form -->
+            <div id="signUpForm" class="hidden">
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="signUpEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="signUpPassword" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <p class="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
+                    </div>
+                    <button type="submit" id="signUpSubmit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        Create Account
+                    </button>
+                    <div class="text-center">
+                        <button type="button" id="showSignIn" class="text-blue-600 hover:text-blue-700 text-sm">
+                            Already have an account? Sign in
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="authMessage" class="mt-4 p-3 rounded-lg hidden">
+                <p id="authMessageText"></p>
+            </div>
         </div>
     </div>
 
@@ -663,17 +699,46 @@
         // Authentication functions
         async function signIn(email, password) {
             try {
+                console.log('Attempting sign in with:', email);
+                
                 const { data, error } = await supabaseClient.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Supabase auth error:', error);
+                    throw error;
+                }
                 
+                console.log('Sign in successful:', data);
                 currentUser = data.user;
                 showDashboard();
                 return { success: true };
             } catch (error) {
+                console.error('Sign in error:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function signUp(email, password) {
+            try {
+                console.log('Attempting sign up with:', email);
+                
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    console.error('Supabase signup error:', error);
+                    throw error;
+                }
+                
+                console.log('Sign up successful:', data);
+                return { success: true, message: 'Check your email for verification link' };
+            } catch (error) {
+                console.error('Sign up error:', error);
                 return { success: false, error: error.message };
             }
         }
@@ -719,7 +784,35 @@
         }
 
         // Event listeners
+        // Modal and form management
+        function showMessage(message, isError = false) {
+            const messageDiv = document.getElementById('authMessage');
+            const messageText = document.getElementById('authMessageText');
+            
+            if (messageDiv && messageText) {
+                messageText.textContent = message;
+                messageDiv.className = `mt-4 p-3 rounded-lg ${isError ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`;
+                messageDiv.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    messageDiv.classList.add('hidden');
+                }, 5000);
+            }
+        }
+
+        function showSignUpForm() {
+            document.getElementById('signInForm').classList.add('hidden');
+            document.getElementById('signUpForm').classList.remove('hidden');
+        }
+
+        function showSignInForm() {
+            document.getElementById('signUpForm').classList.add('hidden');
+            document.getElementById('signInForm').classList.remove('hidden');
+        }
+
+        // Event listeners
         document.getElementById('signInBtn').addEventListener('click', () => {
+            showSignInForm();
             document.getElementById('loginModal').classList.add('active');
         });
 
@@ -727,18 +820,77 @@
             document.getElementById('loginModal').classList.remove('active');
         });
 
+        document.getElementById('showSignUp').addEventListener('click', showSignUpForm);
+        document.getElementById('showSignIn').addEventListener('click', showSignInForm);
+
         document.getElementById('signOutBtn').addEventListener('click', signOut);
 
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        // Sign In Form Handler
+        document.getElementById('signInForm').querySelector('form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
+            
+            const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             
+            console.log('Sign in form submitted:', { email, password: '***' });
+            
+            if (!email || !password) {
+                showMessage('Please enter both email and password', true);
+                return;
+            }
+            
+            const submitBtn = document.getElementById('signInSubmit');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Signing In...';
+            submitBtn.disabled = true;
+            
             const result = await signIn(email, password);
+            
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+            
             if (result.success) {
                 document.getElementById('loginModal').classList.remove('active');
+                showMessage('Welcome back!');
             } else {
-                alert('Sign in failed: ' + result.error);
+                showMessage(result.error || 'Sign in failed', true);
+            }
+        });
+
+        // Sign Up Form Handler
+        document.getElementById('signUpForm').querySelector('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('signUpEmail').value.trim();
+            const password = document.getElementById('signUpPassword').value;
+            
+            console.log('Sign up form submitted:', { email, password: '***' });
+            
+            if (!email || !password) {
+                showMessage('Please enter both email and password', true);
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters', true);
+                return;
+            }
+            
+            const submitBtn = document.getElementById('signUpSubmit');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Creating Account...';
+            submitBtn.disabled = true;
+            
+            const result = await signUp(email, password);
+            
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+            
+            if (result.success) {
+                showMessage(result.message || 'Account created! Check your email for verification.');
+                showSignInForm();
+            } else {
+                showMessage(result.error || 'Account creation failed', true);
             }
         });
 
@@ -794,50 +946,69 @@
         const demoResults = document.getElementById('demoResults');
 
         function startDemo() {
+            // Reset demo first
+            resetDemo();
+            
+            // Hide upload, show analysis
             demoUpload.classList.add('hidden');
             demoAnalysis.classList.remove('hidden');
             
             const steps = [
-                { spinner: 'spinner1', step: 'step1', check: 'check1', progress: 'progress1', duration: 1800 },
-                { spinner: 'spinner2', step: 'step2', check: 'check2', progress: 'progress2', duration: 2200 },
-                { spinner: 'spinner3', step: 'step3', check: 'check3', progress: 'progress3', duration: 2600 },
-                { spinner: 'spinner4', step: 'step4', check: 'check4', progress: 'progress4', duration: 1800 }
+                { spinner: 'spinner1', step: 'step1', check: 'check1', progress: 'progress1', duration: 2000 },
+                { spinner: 'spinner2', step: 'step2', check: 'check2', progress: 'progress2', duration: 2500 },
+                { spinner: 'spinner3', step: 'step3', check: 'check3', progress: 'progress3', duration: 3000 },
+                { spinner: 'spinner4', step: 'step4', check: 'check4', progress: 'progress4', duration: 2000 }
             ];
             
             let delay = 0;
             steps.forEach((stepData, index) => {
                 setTimeout(() => {
+                    // Complete previous step
                     if (index > 0) {
                         const prevSpinner = document.getElementById(steps[index-1].spinner);
                         const prevCheck = document.getElementById(steps[index-1].check);
                         const prevStep = document.getElementById(steps[index-1].step);
                         
-                        prevSpinner.style.display = 'none';
-                        prevCheck.classList.remove('hidden');
-                        prevStep.classList.add('text-green-600');
+                        if (prevSpinner) prevSpinner.style.display = 'none';
+                        if (prevCheck) prevCheck.classList.remove('hidden');
+                        if (prevStep) {
+                            prevStep.classList.remove('text-gray-700');
+                            prevStep.classList.add('text-green-600');
+                        }
                     }
                     
+                    // Start current step
                     const currentSpinner = document.getElementById(stepData.spinner);
                     const currentStep = document.getElementById(stepData.step);
                     const currentProgress = document.getElementById(stepData.progress);
                     
-                    currentSpinner.classList.remove('hidden');
-                    currentStep.classList.remove('text-gray-400');
-                    currentStep.classList.add('text-gray-700');
+                    if (currentSpinner) currentSpinner.classList.remove('hidden');
+                    if (currentStep) {
+                        currentStep.classList.remove('text-gray-400');
+                        currentStep.classList.add('text-gray-700');
+                    }
                     
+                    // Animate progress bar
                     setTimeout(() => {
-                        currentProgress.style.width = '100%';
+                        if (currentProgress) currentProgress.style.width = '100%';
                     }, 200);
                     
+                    // Complete final step
                     if (index === steps.length - 1) {
                         setTimeout(() => {
-                            currentSpinner.style.display = 'none';
+                            if (currentSpinner) currentSpinner.style.display = 'none';
                             const currentCheck = document.getElementById(stepData.check);
-                            currentCheck.classList.remove('hidden');
-                            currentStep.classList.add('text-green-600');
+                            if (currentCheck) currentCheck.classList.remove('hidden');
+                            if (currentStep) {
+                                currentStep.classList.remove('text-gray-700');
+                                currentStep.classList.add('text-green-600');
+                            }
                             
-                            document.getElementById('analysisComplete').classList.remove('hidden');
+                            // Show completion message
+                            const analysisComplete = document.getElementById('analysisComplete');
+                            if (analysisComplete) analysisComplete.classList.remove('hidden');
                             
+                            // Show results after delay
                             setTimeout(() => {
                                 demoAnalysis.classList.add('hidden');
                                 demoResults.style.display = 'block';
@@ -852,31 +1023,47 @@
         }
 
         function resetDemo() {
-            demoUpload.classList.remove('hidden');
-            demoAnalysis.classList.add('hidden');
-            demoResults.style.display = 'none';
-            document.getElementById('analysisComplete').classList.add('hidden');
+            // Show upload, hide others
+            if (demoUpload) demoUpload.classList.remove('hidden');
+            if (demoAnalysis) demoAnalysis.classList.add('hidden');
+            if (demoResults) demoResults.style.display = 'none';
             
+            const analysisComplete = document.getElementById('analysisComplete');
+            if (analysisComplete) analysisComplete.classList.add('hidden');
+            
+            // Reset all steps
             for (let i = 1; i <= 4; i++) {
                 const spinner = document.getElementById(`spinner${i}`);
                 const step = document.getElementById(`step${i}`);
                 const check = document.getElementById(`check${i}`);
                 const progress = document.getElementById(`progress${i}`);
                 
-                spinner.classList.add('hidden');
-                spinner.style.display = 'inline-block';
-                check.classList.add('hidden');
-                progress.style.width = '0%';
-                step.className = i === 1 ? 'text-gray-700' : 'text-gray-400';
+                if (spinner) {
+                    spinner.classList.add('hidden');
+                    spinner.style.display = 'inline-block';
+                }
+                if (check) check.classList.add('hidden');
+                if (progress) progress.style.width = '0%';
+                if (step) {
+                    step.className = i === 1 ? 'text-gray-700' : 'text-gray-400';
+                }
             }
         }
 
-        tryDemoBtn.addEventListener('click', () => {
-            resetDemo();
-            document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
-        });
+        // Demo event listeners
+        if (tryDemoBtn) {
+            tryDemoBtn.addEventListener('click', () => {
+                resetDemo();
+                const demoSection = document.getElementById('demo');
+                if (demoSection) {
+                    demoSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        }
 
-        startDemoBtn.addEventListener('click', startDemo);
+        if (startDemoBtn) {
+            startDemoBtn.addEventListener('click', startDemo);
+        }
 
         // Contract upload functionality
         document.getElementById('contractUpload').addEventListener('change', function(e) {
