@@ -111,6 +111,141 @@
             margin: 0 0.5rem;
         }
         
+        /* Interactive Demo Section */
+        .demo {
+            padding: 4rem 2rem;
+            background: white;
+        }
+        .demo h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        .demo-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 3rem;
+        }
+        
+        /* Interactive Contract Demo */
+        .contract-demo-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .contract-header {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .contract-info h3 {
+            font-size: 1.25rem;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        .contract-meta {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        .risk-summary {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .risk-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .risk-high { background: #fee2e2; color: #dc2626; }
+        .risk-medium { background: #fef3c7; color: #d97706; }
+        .risk-low { background: #dbeafe; color: #2563eb; }
+        
+        .contract-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 1.5rem;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .contract-text {
+            padding: 2rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #374151;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .margin-notes {
+            background: #fefce8;
+            border-left: 3px solid #eab308;
+            padding: 1.5rem;
+            overflow-y: auto;
+            max-height: 500px;
+        }
+        .margin-notes h4 {
+            color: #92400e;
+            margin-bottom: 1rem;
+        }
+        
+        .highlighted {
+            background: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .highlighted:hover {
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        .highlighted.high-risk {
+            background: #fee2e2;
+            border-left: 3px solid #ef4444;
+        }
+        .highlighted.medium-risk {
+            background: #fef3c7;
+            border-left: 3px solid #f59e0b;
+        }
+        .highlighted.low-risk {
+            background: #dbeafe;
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .note-item {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #eab308;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .note-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .note-item.high-risk { border-left-color: #ef4444; }
+        .note-item.medium-risk { border-left-color: #f59e0b; }
+        .note-item.low-risk { border-left-color: #3b82f6; }
+        .note-item strong {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
         /* Features Section */
         .features {
             padding: 4rem 2rem;
@@ -130,7 +265,6 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            margin-bottom: 3rem;
         }
         .feature-card {
             background: white;
@@ -147,117 +281,6 @@
             font-size: 1.5rem;
             margin-bottom: 1rem;
             color: #1f2937;
-        }
-        
-        /* Demo Section */
-        .demo {
-            padding: 4rem 2rem;
-            background: white;
-        }
-        .demo h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #1f2937;
-        }
-        .demo-subtitle {
-            text-align: center;
-            font-size: 1.2rem;
-            color: #6b7280;
-            margin-bottom: 3rem;
-        }
-        .demo-container {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 2rem;
-            margin: 2rem auto;
-            max-width: 900px;
-        }
-        .contract-demo {
-            background: white;
-            border-radius: 8px;
-            padding: 2rem;
-            margin: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .contract-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #e5e7eb;
-        }
-        .contract-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: #1f2937;
-        }
-        .risk-badges {
-            display: flex;
-            gap: 0.5rem;
-        }
-        .risk-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .risk-high { background: #fee2e2; color: #dc2626; }
-        .risk-medium { background: #fef3c7; color: #d97706; }
-        .risk-low { background: #dbeafe; color: #2563eb; }
-        
-        .contract-text {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: #374151;
-        }
-        .highlighted {
-            padding: 2px 4px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        .highlighted.high { background: #fee2e2; }
-        .highlighted.medium { background: #fef3c7; }
-        .highlighted.low { background: #dbeafe; }
-        
-        /* Process Section */
-        .process {
-            padding: 4rem 2rem;
-            background: #f8fafc;
-        }
-        .process h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: #1f2937;
-        }
-        .process-steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        .process-step {
-            text-align: center;
-            padding: 2rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .step-number {
-            width: 60px;
-            height: 60px;
-            background: #3b82f6;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin: 0 auto 1rem;
         }
         
         /* Pricing Section */
@@ -309,23 +332,23 @@
             font-weight: bold;
         }
         
-        /* CTA Section */
-        .final-cta {
+        /* Sign In/Up Section */
+        .auth-section {
             padding: 4rem 2rem;
             background: #1f2937;
             color: white;
             text-align: center;
         }
-        .final-cta h2 {
+        .auth-section h2 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
         }
-        .final-cta p {
+        .auth-section p {
             font-size: 1.2rem;
             margin-bottom: 2rem;
             opacity: 0.9;
         }
-        .cta-buttons {
+        .auth-buttons {
             display: flex;
             justify-content: center;
             gap: 1rem;
@@ -352,7 +375,9 @@
             .hero h1 { font-size: 2rem; }
             .hero-features { flex-direction: column; }
             .nav { flex-direction: column; gap: 1rem; }
-            .cta-buttons { flex-direction: column; align-items: center; }
+            .auth-buttons { flex-direction: column; align-items: center; }
+            .contract-content { grid-template-columns: 1fr; }
+            .margin-notes { max-height: 300px; }
         }
     </style>
 </head>
@@ -362,8 +387,8 @@
         <nav class="nav">
             <div class="logo">Contract Navigator</div>
             <div class="nav-buttons">
-                <a href="dashboard.html" class="btn btn-secondary">Sign In</a>
-                <a href="dashboard.html" class="btn btn-primary">Get Started</a>
+                <button class="btn btn-secondary" onclick="showSignIn()">Sign In</button>
+                <button class="btn btn-primary" onclick="startSignUp()">Get Started</button>
             </div>
         </nav>
     </header>
@@ -389,7 +414,7 @@
         </div>
         
         <div class="cta-section">
-            <a href="dashboard.html" class="btn btn-primary">Start Analysis</a>
+            <button class="btn btn-primary" onclick="startSignUp()">Start Free Trial</button>
             <a href="#demo" class="btn btn-secondary">See Demo</a>
         </div>
     </section>
@@ -402,73 +427,104 @@
                 <div class="feature-card">
                     <div class="feature-icon">📄</div>
                     <h3>Professional Highlighting</h3>
-                    <p>Professional highlighted contracts with color-coded risk areas and detailed margin notes.</p>
+                    <p>Color-coded highlighting shows exactly where risks are located in your contract with detailed margin notes.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">📊</div>
                     <h3>Comprehensive Reports</h3>
-                    <p>Comprehensive analysis reports with executive summaries, risk assessments, and action checklists.</p>
+                    <p>Complete analysis with action items and compliance checklist generated from actual contract analysis.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">⚖️</div>
                     <h3>Risk Analysis</h3>
-                    <p>Contract-specific compliance requirements and action items generated from actual contract analysis.</p>
+                    <p>Contract-specific compliance requirements and actionable recommendations from AI analysis.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Demo Section -->
+    <!-- Interactive Demo Section -->
     <section class="demo" id="demo">
         <div class="container">
-            <h2>Watch how Contract Navigator analyzes contracts</h2>
-            <p class="demo-subtitle">See professional highlighting and risk analysis in action</p>
+            <h2>Watch how Contract Navigator analyzes and annotates a real consulting contract</h2>
+            <p class="demo-subtitle">Professional highlighting with color-coded risk areas and detailed margin notes</p>
             
-            <div class="demo-container">
-                <div class="contract-demo">
-                    <div class="contract-header">
-                        <div>
-                            <div class="contract-title">Professional Services Agreement</div>
-                            <p>TechCorp Solutions LLC & Global Industries Inc. • $125,000 over 6 months</p>
-                        </div>
-                        <div class="risk-badges">
-                            <span class="risk-badge risk-high">3 High Risk</span>
-                            <span class="risk-badge risk-medium">5 Medium Risk</span>
-                            <span class="risk-badge risk-low">2 Low Risk</span>
-                        </div>
+            <div class="contract-demo-container">
+                <div class="contract-header">
+                    <div class="contract-info">
+                        <h3>Professional Services Agreement</h3>
+                        <div class="contract-meta">Between TechCorp Solutions LLC and Global Industries Inc.</div>
+                    </div>
+                    <div class="risk-summary">
+                        <span class="risk-badge risk-high">3 High Risk</span>
+                        <span class="risk-badge risk-medium">5 Medium Risk</span>
+                        <span class="risk-badge risk-low">2 Low Risk</span>
+                    </div>
+                </div>
+                
+                <div class="contract-content">
+                    <div class="contract-text">
+                        <h4>PROFESSIONAL SERVICES AGREEMENT</h4>
+                        <p><strong>Between TechCorp Solutions LLC and Global Industries Inc.</strong></p>
+                        <br>
+                        
+                        <p><strong>1. PARTIES AND EFFECTIVE DATE.</strong> This Professional Services Agreement ("Agreement") is entered into as of January 15, 2025 by and between TechCorp Solutions LLC, a Delaware limited liability company ("Contractor"), and Global Industries Inc., a California corporation ("Client").</p>
+                        <br>
+                        
+                        <p><strong>2. SCOPE OF SERVICES.</strong> Contractor shall provide digital transformation consulting services including system integration, process optimization, and technology advisory services as detailed in Exhibit A attached hereto and incorporated by reference.</p>
+                        <br>
+                        
+                        <p><strong>3. COMPENSATION AND PAYMENT TERMS.</strong> In consideration for the Services, Client agrees to pay Contractor a total fee of $125,000 payable in monthly installments of $20,833. <span class="highlighted high-risk" data-note="1">Payment shall be due ninety (90) days after receipt of invoice ("Net 90"). Late payments shall not accrue interest or penalties.</span></p>
+                        <br>
+                        
+                        <p><strong>4. PERFORMANCE REQUIREMENTS.</strong> <span class="highlighted medium-risk" data-note="2">Contractor shall maintain dedicated on-site presence during Client's business hours (8 AM - 6 PM, Monday-Friday) and provide 24/7 emergency support response within 2 hours for critical system issues.</span></p>
+                        <br>
+                        
+                        <p><strong>5. TERM AND TERMINATION.</strong> This Agreement shall commence on the Effective Date and continue for six (6) months unless terminated earlier. Either party may terminate for material breach with thirty (30) days written notice. <span class="highlighted high-risk" data-note="3">Client may not terminate this Agreement for convenience.</span></p>
+                        <br>
+                        
+                        <p><strong>6. INDEMNIFICATION.</strong> <span class="highlighted high-risk" data-note="4">Contractor agrees to indemnify, defend, and hold harmless Client from any and all claims, damages, losses, costs, and expenses (including attorney's fees) arising out of or relating to Contractor's performance of this Agreement, regardless of the cause of such claims or whether caused by Contractor's negligence.</span></p>
+                        <br>
+                        
+                        <p><strong>7. INSURANCE.</strong> <span class="highlighted medium-risk" data-note="5">Contractor shall maintain Commercial General Liability insurance of not less than $2,000,000 per occurrence, Professional Liability insurance of $1,000,000 per claim, and Cyber Liability insurance of $5,000,000 per incident.</span></p>
+                        <br>
+                        
+                        <p><strong>8. INTELLECTUAL PROPERTY.</strong> <span class="highlighted medium-risk" data-note="6">All work product, deliverables, and intellectual property created by Contractor in performance of this Agreement shall remain the property of Contractor, with Client receiving a non-exclusive, royalty-free license for business use.</span></p>
                     </div>
                     
-                    <div class="contract-text">
-                        <p><strong>3. COMPENSATION AND PAYMENT TERMS.</strong> In consideration for the Services, Client agrees to pay Contractor a total fee of $125,000 payable in monthly installments of $20,833. <span class="highlighted high">Payment shall be due ninety (90) days after receipt of invoice ("Net 90"). Late payments shall not accrue interest or penalties.</span></p>
+                    <div class="margin-notes">
+                        <h4>📝 Risk Analysis & Notes</h4>
                         
-                        <p><strong>5. TERM AND TERMINATION.</strong> This Agreement shall commence on the Effective Date and continue for six (6) months unless terminated earlier. Either party may terminate for material breach with thirty (30) days written notice. <span class="highlighted high">Client may not terminate this Agreement for convenience.</span></p>
+                        <div class="note-item high-risk" id="note1">
+                            <strong>🚨 HIGH RISK: Extended Payment Terms</strong>
+                            <p>90-day payment terms create significant cash flow risk. Industry standard is Net 30. Recommend negotiating shorter terms and adding late payment penalties.</p>
+                        </div>
                         
-                        <p><strong>6. INDEMNIFICATION.</strong> <span class="highlighted medium">Contractor agrees to indemnify, defend, and hold harmless Client from any and all claims, damages, losses, costs, and expenses (including attorney's fees) arising out of or relating to Contractor's performance of this Agreement, regardless of the cause of such claims or whether caused by Contractor's negligence.</span></p>
+                        <div class="note-item medium-risk" id="note2">
+                            <strong>⚠️ MEDIUM RISK: Demanding Performance Requirements</strong>
+                            <p>On-site presence and 24/7 support requirements are extensive. Ensure adequate staffing and consider additional compensation for emergency support.</p>
+                        </div>
+                        
+                        <div class="note-item high-risk" id="note3">
+                            <strong>🚨 HIGH RISK: No Termination for Convenience</strong>
+                            <p>Client cannot terminate without cause, but contractor's termination rights aren't specified. This creates legal risk. Add mutual termination provisions.</p>
+                        </div>
+                        
+                        <div class="note-item high-risk" id="note4">
+                            <strong>🚨 HIGH RISK: Broad Indemnification</strong>
+                            <p>Unlimited indemnification "regardless of cause" is extremely risky. Limit indemnification to contractor's willful misconduct or negligence only.</p>
+                        </div>
+                        
+                        <div class="note-item medium-risk" id="note5">
+                            <strong>⚠️ MEDIUM RISK: High Insurance Requirements</strong>
+                            <p>$5M cyber liability insurance is substantial. Verify current coverage levels and budget for increased premiums if needed.</p>
+                        </div>
+                        
+                        <div class="note-item medium-risk" id="note6">
+                            <strong>⚠️ MEDIUM RISK: IP Ownership</strong>
+                            <p>Contractor retains all IP rights. Consider if client should own work product developed specifically for their business needs.</p>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Process Section -->
-    <section class="process">
-        <div class="container">
-            <h2>From contract upload to professional annotated PDF in minutes</h2>
-            <div class="process-steps">
-                <div class="process-step">
-                    <div class="step-number">1</div>
-                    <h3>Upload</h3>
-                    <p>Upload your contract and our AI performs comprehensive analysis, identifying risks and opportunities.</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">2</div>
-                    <h3>Analyze</h3>
-                    <p>Get your original contract with color-coded highlighting and detailed margin notes for every risk area.</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">3</div>
-                    <h3>Download</h3>
-                    <p>Download annotated PDFs and comprehensive reports with specific action items and compliance checklists.</p>
                 </div>
             </div>
         </div>
@@ -477,8 +533,8 @@
     <!-- Pricing Section -->
     <section class="pricing">
         <div class="container">
-            <h2>Complete analysis with annotated PDFs and professional reports</h2>
-            <p class="pricing-subtitle">No setup fees • Professional annotations included • Cancel anytime</p>
+            <h2>Get unlimited access to Contract Navigator's analysis</h2>
+            <p class="pricing-subtitle">Professional reports and annotated PDFs for just $49/month</p>
             
             <div class="pricing-card">
                 <div class="price">$49</div>
@@ -490,19 +546,20 @@
                     <li>Team collaboration (up to 5 members)</li>
                     <li>Email notifications</li>
                     <li>Priority support</li>
+                    <li>Cancel anytime</li>
                 </ul>
-                <a href="dashboard.html" class="btn btn-white">Start Free Trial</a>
+                <button class="btn btn-white" onclick="startSignUp()">Start Free Trial</button>
             </div>
         </div>
     </section>
 
-    <!-- Final CTA -->
-    <section class="final-cta">
-        <h2>Ready to transform your contract analysis?</h2>
+    <!-- Sign In/Up Section -->
+    <section class="auth-section">
+        <h2>Ready to get started?</h2>
         <p>Join thousands of businesses using Contract Navigator for professional contract analysis</p>
-        <div class="cta-buttons">
-            <a href="dashboard.html" class="btn btn-primary">Get Started Today</a>
-            <a href="dashboard.html" class="btn btn-white">Sign In</a>
+        <div class="auth-buttons">
+            <button class="btn btn-primary" onclick="startSignUp()">Start Free Trial</button>
+            <button class="btn btn-white" onclick="showSignIn()">Already have an account?</button>
         </div>
     </section>
 
@@ -510,5 +567,108 @@
     <footer class="footer">
         <p>&copy; 2025 Contract Navigator. All rights reserved.</p>
     </footer>
+
+    <script>
+        // Interactive demo functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Contract Navigator Homepage Loaded');
+            setupInteractiveDemo();
+        });
+
+        function setupInteractiveDemo() {
+            // Add click handlers for highlighted text
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('highlighted')) {
+                    const noteId = 'note' + e.target.dataset.note;
+                    const noteElement = document.getElementById(noteId);
+                    if (noteElement) {
+                        // Highlight the corresponding note
+                        document.querySelectorAll('.note-item').forEach(note => {
+                            note.style.animation = '';
+                        });
+                        
+                        noteElement.style.animation = 'pulse 1s ease-in-out';
+                        noteElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        
+                        setTimeout(() => {
+                            noteElement.style.animation = '';
+                        }, 1000);
+                    }
+                }
+            });
+
+            // Add click handlers for note items
+            document.querySelectorAll('.note-item').forEach((note, index) => {
+                note.addEventListener('click', function() {
+                    const highlightedElement = document.querySelector(`[data-note="${index + 1}"]`);
+                    if (highlightedElement) {
+                        highlightedElement.style.animation = 'highlight 1s ease-in-out';
+                        highlightedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        
+                        setTimeout(() => {
+                            highlightedElement.style.animation = '';
+                        }, 1000);
+                    }
+                });
+            });
+        }
+
+        // Authentication functions
+        function showSignIn() {
+            // For existing customers - direct to dashboard
+            const confirmed = confirm('Sign in to your Contract Navigator account?\n\n✅ Access your dashboard\n✅ View your contract library\n✅ Upload new contracts\n\nClick OK to continue to sign in.');
+            
+            if (confirmed) {
+                window.location.href = 'dashboard.html';
+            }
+        }
+
+        function startSignUp() {
+            // For new customers - show payment flow
+            const confirmed = confirm('Start your Contract Navigator subscription?\n\n📄 Unlimited contract analyses\n💰 $49/month (cancel anytime)\n🎯 7-day free trial\n\nClick OK to continue to payment and setup.');
+            
+            if (confirmed) {
+                // Here you would integrate with Stripe or payment processor
+                // For now, simulate the flow
+                setTimeout(() => {
+                    const paymentConfirmed = confirm('Complete your subscription setup?\n\n💳 Payment: $49/month\n📧 Email: Enter your business email\n👥 Team: Add up to 5 members\n\nClick OK to proceed to payment.');
+                    
+                    if (paymentConfirmed) {
+                        // Simulate successful payment and redirect to dashboard
+                        alert('🎉 Welcome to Contract Navigator!\n\n✅ Payment successful\n✅ Account created\n✅ Redirecting to your dashboard\n\nYou can now upload contracts for analysis!');
+                        window.location.href = 'dashboard.html';
+                    }
+                }, 1000);
+            }
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+    <style>
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        
+        @keyframes highlight {
+            0% { background: #fef3c7; }
+            50% { background: #3b82f6; color: white; }
+            100% { background: #fef3c7; }
+        }
+    </style>
 </body>
 </html>
