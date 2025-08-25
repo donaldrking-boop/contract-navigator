@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contract Navigator - AI-Powered Business Contract Analysis</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -80,107 +77,16 @@
             margin: 4px 0; 
             border-radius: 4px; 
         }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        .dashboard-section {
-            display: none;
-        }
-        .dashboard-section.active {
-            display: block;
-        }
     </style>
 </head>
 <body class="bg-gray-50">
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Welcome to Contract Navigator</h2>
-                <button id="closeLogin" class="text-gray-500 hover:text-gray-700">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
-            </div>
-            
-            <!-- Sign In Form -->
-            <div id="signInForm">
-                <form class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                        <input type="email" id="loginEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                        <input type="password" id="loginPassword" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <button type="submit" id="signInSubmit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                        Sign In
-                    </button>
-                    <div class="text-center">
-                        <button type="button" id="showSignUp" class="text-blue-600 hover:text-blue-700 text-sm">
-                            Don't have an account? Sign up
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Sign Up Form -->
-            <div id="signUpForm" class="hidden">
-                <form class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                        <input type="email" id="signUpEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                        <input type="password" id="signUpPassword" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <p class="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
-                    </div>
-                    <button type="submit" id="signUpSubmit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                        Create Account
-                    </button>
-                    <div class="text-center">
-                        <button type="button" id="showSignIn" class="text-blue-600 hover:text-blue-700 text-sm">
-                            Already have an account? Sign in
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div id="authMessage" class="mt-4 p-3 rounded-lg hidden">
-                <p id="authMessageText"></p>
-            </div>
-        </div>
-    </div>
-
     <!-- Header -->
     <header class="bg-white shadow-sm sticky top-0 z-40">
         <nav class="container mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-2">
                     <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <i data-lucide="file-text" class="w-5 h-5 text-white"></i>
+                        <span class="text-white font-bold text-sm">📄</span>
                     </div>
                     <span class="text-2xl font-bold gradient-text">Contract Navigator</span>
                 </div>
@@ -188,7 +94,6 @@
                     <a href="#features" class="text-gray-600 hover:text-blue-600 transition-colors">Features</a>
                     <a href="#pricing" class="text-gray-600 hover:text-blue-600 transition-colors">Pricing</a>
                     <a href="#demo" class="text-gray-600 hover:text-blue-600 transition-colors">Demo</a>
-                    <button id="signInBtn" class="text-gray-600 hover:text-blue-600 transition-colors">Sign In</button>
                     <button id="getStartedBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                         Get Started
                     </button>
@@ -197,805 +102,331 @@
         </nav>
     </header>
 
-    <!-- Main Content -->
-    <main id="mainContent">
-        <!-- Hero Section -->
-        <section class="gradient-bg text-white py-20">
-            <div class="container mx-auto px-6 text-center">
-                <h1 class="text-5xl font-bold mb-6">
-                    The Only 4-Point<br>
-                    <span class="text-yellow-300">Contract Intelligence</span><br>
-                    Platform
-                </h1>
-                <p class="text-xl mb-8 max-w-3xl mx-auto opacity-90">
-                    Professional AI contract analysis providing comprehensive business intelligence - Administrative, Financial, Performance, and Legal insights in minutes.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button id="heroGetStartedBtn" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                        Get Started - $49/month
-                    </button>
-                    <button id="tryDemoBtn" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
-                        Try Interactive Demo
-                    </button>
-                </div>
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-20">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-5xl font-bold mb-6">
+                The Only 4-Point<br>
+                <span class="text-yellow-300">Contract Intelligence</span><br>
+                Platform
+            </h1>
+            <p class="text-xl mb-8 max-w-3xl mx-auto opacity-90">
+                Professional AI contract analysis providing comprehensive business intelligence - Administrative, Financial, Performance, and Legal insights in minutes.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="heroGetStartedBtn" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                    Get Started - $49/month
+                </button>
+                <button id="tryDemoBtn" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                    Try Interactive Demo
+                </button>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Interactive Demo Section -->
-        <section id="demo" class="py-16">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl font-bold mb-4">See Contract Navigator in Action</h2>
-                    <p class="text-xl text-gray-600">Upload a contract and watch our AI provide comprehensive business intelligence</p>
-                </div>
-                
-                <div class="max-w-4xl mx-auto">
-                    <div class="demo-container">
-                        <div id="demoUpload">
-                            <div class="text-center">
-                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-12 hover:border-blue-400 transition-colors cursor-pointer">
-                                    <i data-lucide="upload" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
-                                    <h3 class="text-lg font-semibold mb-2">Upload Your Contract</h3>
-                                    <p class="text-gray-600 mb-4">Drop a contract file here or click to browse</p>
-                                    <button id="startDemoBtn" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                                        Start Demo Analysis
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="demoAnalysis" class="hidden">
-                            <h3 class="text-xl font-bold mb-6">Analyzing: Software License Agreement</h3>
-                            
-                            <!-- Progress Steps -->
-                            <div class="space-y-4 mb-8">
-                                <div class="flex items-center">
-                                    <div class="spinner" id="spinner1"></div>
-                                    <span class="text-gray-700" id="step1">Reading contract content...</span>
-                                    <i data-lucide="check" class="w-5 h-5 text-green-600 ml-auto hidden" id="check1"></i>
-                                </div>
-                                <div class="bg-gray-200 rounded-full h-2">
-                                    <div class="bg-blue-600 h-2 rounded-full progress-bar" id="progress1"></div>
-                                </div>
-                                
-                                <div class="flex items-center">
-                                    <div class="spinner hidden" id="spinner2"></div>
-                                    <span class="text-gray-400" id="step2">Analyzing terms and conditions...</span>
-                                    <i data-lucide="check" class="w-5 h-5 text-green-600 ml-auto hidden" id="check2"></i>
-                                </div>
-                                <div class="bg-gray-200 rounded-full h-2">
-                                    <div class="bg-blue-600 h-2 rounded-full progress-bar" id="progress2"></div>
-                                </div>
-                                
-                                <div class="flex items-center">
-                                    <div class="spinner hidden" id="spinner3"></div>
-                                    <span class="text-gray-400" id="step3">Generating risk assessment...</span>
-                                    <i data-lucide="check" class="w-5 h-5 text-green-600 ml-auto hidden" id="check3"></i>
-                                </div>
-                                <div class="bg-gray-200 rounded-full h-2">
-                                    <div class="bg-blue-600 h-2 rounded-full progress-bar" id="progress3"></div>
-                                </div>
-                                
-                                <div class="flex items-center">
-                                    <div class="spinner hidden" id="spinner4"></div>
-                                    <span class="text-gray-400" id="step4">Compiling business intelligence...</span>
-                                    <i data-lucide="check" class="w-5 h-5 text-green-600 ml-auto hidden" id="check4"></i>
-                                </div>
-                                <div class="bg-gray-200 rounded-full h-2">
-                                    <div class="bg-blue-600 h-2 rounded-full progress-bar" id="progress4"></div>
-                                </div>
-                            </div>
-
-                            <div id="analysisComplete" class="hidden text-center py-4">
-                                <i data-lucide="check-circle" class="w-12 h-12 text-green-600 mx-auto mb-2"></i>
-                                <h4 class="text-xl font-bold text-green-600">Analysis Complete!</h4>
-                            </div>
-                        </div>
-
-                        <!-- Demo Results -->
-                        <div id="demoResults" class="analysis-result">
-                            <div class="bg-white rounded-lg p-6 shadow-sm">
-                                <h3 class="text-2xl font-bold mb-6 flex items-center">
-                                    <i data-lucide="file-check" class="w-6 h-6 mr-2 text-blue-600"></i>
-                                    Contract Analysis Results
-                                </h3>
-                                
-                                <div class="grid md:grid-cols-2 gap-6 mb-8">
-                                    <!-- Administrative -->
-                                    <div class="highlight-administrative">
-                                        <h4 class="font-bold text-blue-800 mb-2 flex items-center">
-                                            <i data-lucide="settings" class="w-5 h-5 mr-2"></i>
-                                            Administrative Analysis
-                                        </h4>
-                                        <p class="text-sm text-blue-700 mb-2"><strong>Risk Level:</strong> Low</p>
-                                        <p class="text-sm text-blue-700">Standard license terms with clear usage rights. Renewal process is straightforward with 30-day notice period.</p>
-                                    </div>
-
-                                    <!-- Financial -->
-                                    <div class="highlight-financial">
-                                        <h4 class="font-bold text-green-800 mb-2 flex items-center">
-                                            <i data-lucide="dollar-sign" class="w-5 h-5 mr-2"></i>
-                                            Financial Analysis
-                                        </h4>
-                                        <p class="text-sm text-green-700 mb-2"><strong>Risk Level:</strong> Medium</p>
-                                        <p class="text-sm text-green-700">Annual fee of $50,000 with automatic escalation clause of 3% annually. Payment terms require 30-day advance payment.</p>
-                                    </div>
-
-                                    <!-- Performance -->
-                                    <div class="highlight-performance">
-                                        <h4 class="font-bold text-yellow-800 mb-2 flex items-center">
-                                            <i data-lucide="trending-up" class="w-5 h-5 mr-2"></i>
-                                            Performance Analysis
-                                        </h4>
-                                        <p class="text-sm text-yellow-700 mb-2"><strong>Risk Level:</strong> Low</p>
-                                        <p class="text-sm text-yellow-700">99.5% uptime guarantee with service level credits. Support response time guaranteed within 4 hours for critical issues.</p>
-                                    </div>
-
-                                    <!-- Legal -->
-                                    <div class="highlight-legal">
-                                        <h4 class="font-bold text-red-800 mb-2 flex items-center">
-                                            <i data-lucide="scale" class="w-5 h-5 mr-2"></i>
-                                            Legal Analysis
-                                        </h4>
-                                        <p class="text-sm text-red-700 mb-2"><strong>Risk Level:</strong> High</p>
-                                        <p class="text-sm text-red-700">Broad indemnification clause favoring vendor. Limited liability cap may not cover potential damages. Dispute resolution requires binding arbitration.</p>
-                                    </div>
-                                </div>
-
-                                <!-- Strategic Recommendations -->
-                                <div class="bg-gray-50 p-6 rounded-lg">
-                                    <h4 class="text-lg font-bold mb-4 flex items-center">
-                                        <i data-lucide="lightbulb" class="w-5 h-5 mr-2 text-orange-500"></i>
-                                        Strategic Recommendations
-                                    </h4>
-                                    <ul class="space-y-2">
-                                        <li class="flex items-start">
-                                            <span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded mr-3 mt-0.5">HIGH</span>
-                                            <span class="text-sm">Negotiate mutual indemnification clause to balance legal risk exposure</span>
-                                        </li>
-                                        <li class="flex items-start">
-                                            <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded mr-3 mt-0.5">MED</span>
-                                            <span class="text-sm">Consider capping automatic price escalation at 2% annually or CPI, whichever is lower</span>
-                                        </li>
-                                        <li class="flex items-start">
-                                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded mr-3 mt-0.5">LOW</span>
-                                            <span class="text-sm">Ensure data backup and recovery procedures are clearly defined in service terms</span>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="text-center mt-8">
-                                    <button id="getFullAnalysisBtn" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                                        Get Full Analysis for $49/month
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Interactive Demo Section -->
+    <section id="demo" class="py-16">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">See Contract Navigator in Action</h2>
+                <p class="text-xl text-gray-600">Upload a contract and watch our AI provide comprehensive business intelligence</p>
             </div>
-        </section>
-
-        <!-- Features Section -->
-        <section id="features" class="py-16 bg-white">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl font-bold mb-4">Complete Business Intelligence</h2>
-                    <p class="text-xl text-gray-600">Get comprehensive contract analysis across all business dimensions</p>
-                </div>
-                
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="card-hover bg-white p-6 rounded-xl shadow-sm border">
-                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                            <i data-lucide="settings" class="w-6 h-6 text-blue-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Administrative</h3>
-                        <p class="text-gray-600">Timeline analysis, renewal dates, notification requirements, and process workflows</p>
-                    </div>
-                    
-                    <div class="card-hover bg-white p-6 rounded-xl shadow-sm border">
-                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                            <i data-lucide="dollar-sign" class="w-6 h-6 text-green-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Financial</h3>
-                        <p class="text-gray-600">Cost analysis, payment terms, penalties, escalation clauses, and budget impact</p>
-                    </div>
-                    
-                    <div class="card-hover bg-white p-6 rounded-xl shadow-sm border">
-                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
-                            <i data-lucide="trending-up" class="w-6 h-6 text-orange-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Performance</h3>
-                        <p class="text-gray-600">SLA tracking, deliverables, milestones, quality metrics, and success criteria</p>
-                    </div>
-                    
-                    <div class="card-hover bg-white p-6 rounded-xl shadow-sm border">
-                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                            <i data-lucide="scale" class="w-6 h-6 text-red-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Legal</h3>
-                        <p class="text-gray-600">Risk assessment, liability exposure, compliance requirements, and legal obligations</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Pricing Section -->
-        <section id="pricing" class="py-16 bg-gray-50">
-            <div class="container mx-auto px-6 text-center">
-                <h2 class="text-4xl font-bold mb-4">Simple, Professional Pricing</h2>
-                <p class="text-xl text-gray-600 mb-12">Get started with comprehensive contract analysis today</p>
-                
-                <div class="max-w-md mx-auto">
-                    <div class="bg-white rounded-xl shadow-lg p-8 border-2 border-blue-500">
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="demo-container">
+                    <div id="demoUpload">
                         <div class="text-center">
-                            <h3 class="text-2xl font-bold mb-4">Contract Navigator Pro</h3>
-                            <div class="mb-6">
-                                <span class="text-5xl font-bold">$49</span>
-                                <span class="text-gray-600">/month</span>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-12 hover:border-blue-400 transition-colors cursor-pointer">
+                                <div class="text-6xl text-gray-400 mb-4">📄</div>
+                                <h3 class="text-lg font-semibold mb-2">Upload Your Contract</h3>
+                                <p class="text-gray-600 mb-4">Drop a contract file here or click to browse</p>
+                                <button id="startDemoBtn" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                                    Start Demo Analysis
+                                </button>
                             </div>
-                            <ul class="text-left space-y-3 mb-8">
-                                <li class="flex items-center">
-                                    <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
-                                    <span>Unlimited contract analysis</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
-                                    <span>4-point business intelligence</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
-                                    <span>Risk assessment & recommendations</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
-                                    <span>Export & share reports</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
-                                    <span>Priority support</span>
-                                </li>
-                            </ul>
-                            <button id="pricingGetStartedBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
-                                Get Started Now
-                            </button>
-                            <p class="text-sm text-gray-500 mt-4">Cancel anytime. No contracts.</p>
+                        </div>
+                    </div>
+
+                    <div id="demoAnalysis" class="hidden">
+                        <h3 class="text-xl font-bold mb-6">Analyzing: Software License Agreement</h3>
+                        
+                        <!-- Progress Steps -->
+                        <div class="space-y-4 mb-8">
+                            <div class="flex items-center">
+                                <div class="spinner" id="spinner1"></div>
+                                <span class="text-gray-700" id="step1">Reading contract content...</span>
+                                <span class="ml-auto text-green-600 text-xl hidden" id="check1">✓</span>
+                            </div>
+                            <div class="bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full progress-bar" id="progress1"></div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="spinner hidden" id="spinner2"></div>
+                                <span class="text-gray-400" id="step2">Analyzing terms and conditions...</span>
+                                <span class="ml-auto text-green-600 text-xl hidden" id="check2">✓</span>
+                            </div>
+                            <div class="bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full progress-bar" id="progress2"></div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="spinner hidden" id="spinner3"></div>
+                                <span class="text-gray-400" id="step3">Generating risk assessment...</span>
+                                <span class="ml-auto text-green-600 text-xl hidden" id="check3">✓</span>
+                            </div>
+                            <div class="bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full progress-bar" id="progress3"></div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="spinner hidden" id="spinner4"></div>
+                                <span class="text-gray-400" id="step4">Compiling business intelligence...</span>
+                                <span class="ml-auto text-green-600 text-xl hidden" id="check4">✓</span>
+                            </div>
+                            <div class="bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full progress-bar" id="progress4"></div>
+                            </div>
+                        </div>
+
+                        <div id="analysisComplete" class="hidden text-center py-4">
+                            <div class="text-6xl text-green-600 mb-2">✓</div>
+                            <h4 class="text-xl font-bold text-green-600">Analysis Complete!</h4>
+                        </div>
+                    </div>
+
+                    <!-- Demo Results -->
+                    <div id="demoResults" class="analysis-result">
+                        <div class="bg-white rounded-lg p-6 shadow-sm">
+                            <h3 class="text-2xl font-bold mb-6 flex items-center">
+                                <span class="mr-2">📋</span>
+                                Contract Analysis Results
+                            </h3>
+                            
+                            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                                <!-- Administrative -->
+                                <div class="highlight-administrative">
+                                    <h4 class="font-bold text-blue-800 mb-2 flex items-center">
+                                        <span class="mr-2">⚙️</span>
+                                        Administrative Analysis
+                                    </h4>
+                                    <p class="text-sm text-blue-700 mb-2"><strong>Risk Level:</strong> Low</p>
+                                    <p class="text-sm text-blue-700">Standard license terms with clear usage rights. Renewal process is straightforward with 30-day notice period.</p>
+                                </div>
+
+                                <!-- Financial -->
+                                <div class="highlight-financial">
+                                    <h4 class="font-bold text-green-800 mb-2 flex items-center">
+                                        <span class="mr-2">💰</span>
+                                        Financial Analysis
+                                    </h4>
+                                    <p class="text-sm text-green-700 mb-2"><strong>Risk Level:</strong> Medium</p>
+                                    <p class="text-sm text-green-700">Annual fee of $50,000 with automatic escalation clause of 3% annually. Payment terms require 30-day advance payment.</p>
+                                </div>
+
+                                <!-- Performance -->
+                                <div class="highlight-performance">
+                                    <h4 class="font-bold text-yellow-800 mb-2 flex items-center">
+                                        <span class="mr-2">📈</span>
+                                        Performance Analysis
+                                    </h4>
+                                    <p class="text-sm text-yellow-700 mb-2"><strong>Risk Level:</strong> Low</p>
+                                    <p class="text-sm text-yellow-700">99.5% uptime guarantee with service level credits. Support response time guaranteed within 4 hours for critical issues.</p>
+                                </div>
+
+                                <!-- Legal -->
+                                <div class="highlight-legal">
+                                    <h4 class="font-bold text-red-800 mb-2 flex items-center">
+                                        <span class="mr-2">⚖️</span>
+                                        Legal Analysis
+                                    </h4>
+                                    <p class="text-sm text-red-700 mb-2"><strong>Risk Level:</strong> High</p>
+                                    <p class="text-sm text-red-700">Broad indemnification clause favoring vendor. Limited liability cap may not cover potential damages. Dispute resolution requires binding arbitration.</p>
+                                </div>
+                            </div>
+
+                            <!-- Strategic Recommendations -->
+                            <div class="bg-gray-50 p-6 rounded-lg">
+                                <h4 class="text-lg font-bold mb-4 flex items-center">
+                                    <span class="mr-2">💡</span>
+                                    Strategic Recommendations
+                                </h4>
+                                <ul class="space-y-2">
+                                    <li class="flex items-start">
+                                        <span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded mr-3 mt-0.5">HIGH</span>
+                                        <span class="text-sm">Negotiate mutual indemnification clause to balance legal risk exposure</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded mr-3 mt-0.5">MED</span>
+                                        <span class="text-sm">Consider capping automatic price escalation at 2% annually or CPI, whichever is lower</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded mr-3 mt-0.5">LOW</span>
+                                        <span class="text-sm">Ensure data backup and recovery procedures are clearly defined in service terms</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="text-center mt-8">
+                                <button id="getFullAnalysisBtn" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                                    Get Full Analysis for $49/month
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Footer -->
-        <footer class="bg-gray-800 text-white py-12">
-            <div class="container mx-auto px-6">
-                <div class="grid md:grid-cols-4 gap-8">
-                    <div>
-                        <div class="flex items-center space-x-2 mb-4">
-                            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                                <i data-lucide="file-text" class="w-5 h-5 text-white"></i>
-                            </div>
-                            <span class="text-xl font-bold">Contract Navigator</span>
-                        </div>
-                        <p class="text-gray-300">Professional AI contract analysis for smarter business decisions.</p>
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">Complete Business Intelligence</h2>
+                <p class="text-xl text-gray-600">Get comprehensive contract analysis across all business dimensions</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="card-hover bg-white p-6 rounded-xl shadow-sm border">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                        <span class="text-2xl">⚙️</span>
                     </div>
-                    
-                    <div>
-                        <h4 class="font-semibold mb-4">Product</h4>
-                        <ul class="space-y-2 text-gray-300">
-                            <li><a href="#features" class="hover:text-white transition-colors">Features</a></li>
-                            <li><a href="#pricing" class="hover:text-white transition-colors">Pricing</a></li>
-                            <li><a href="#demo" class="hover:text-white transition-colors">Demo</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div>
-                        <h4 class="font-semibold mb-4">Company</h4>
-                        <ul class="space-y-2 text-gray-300">
-                            <li><a href="#" class="hover:text-white transition-colors">About</a></li>
-                            <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
-                            <li><a href="#" class="hover:text-white transition-colors">Support</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div>
-                        <h4 class="font-semibold mb-4">Legal</h4>
-                        <ul class="space-y-2 text-gray-300">
-                            <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
-                            <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
-                            <li><a href="#" class="hover:text-white transition-colors">Data Security</a></li>
-                        </ul>
-                    </div>
+                    <h3 class="text-xl font-bold mb-3">Administrative</h3>
+                    <p class="text-gray-600">Timeline analysis, renewal dates, notification requirements, and process workflows</p>
                 </div>
                 
-                <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
-                    <p>&copy; 2025 Contract Navigator. All rights reserved.</p>
+                <div class="card-hover bg-white p-6 rounded-xl shadow-sm border">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                        <span class="text-2xl">💰</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Financial</h3>
+                    <p class="text-gray-600">Cost analysis, payment terms, penalties, escalation clauses, and budget impact</p>
+                </div>
+                
+                <div class="card-hover bg-white p-6 rounded-xl shadow-sm border">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                        <span class="text-2xl">📈</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Performance</h3>
+                    <p class="text-gray-600">SLA tracking, deliverables, milestones, quality metrics, and success criteria</p>
+                </div>
+                
+                <div class="card-hover bg-white p-6 rounded-xl shadow-sm border">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                        <span class="text-2xl">⚖️</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Legal</h3>
+                    <p class="text-gray-600">Risk assessment, liability exposure, compliance requirements, and legal obligations</p>
                 </div>
             </div>
-        </footer>
-    </main>
+        </div>
+    </section>
 
-    <!-- Dashboard View (Hidden by default) -->
-    <div id="dashboardView" class="hidden min-h-screen bg-gray-50">
-        <div class="bg-white shadow-sm">
-            <div class="container mx-auto px-6 py-4">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center space-x-2">
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-4">Simple, Professional Pricing</h2>
+            <p class="text-xl text-gray-600 mb-12">Get started with comprehensive contract analysis today</p>
+            
+            <div class="max-w-md mx-auto">
+                <div class="bg-white rounded-xl shadow-lg p-8 border-2 border-blue-500">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-4">Contract Navigator Pro</h3>
+                        <div class="mb-6">
+                            <span class="text-5xl font-bold">$49</span>
+                            <span class="text-gray-600">/month</span>
+                        </div>
+                        <ul class="text-left space-y-3 mb-8">
+                            <li class="flex items-center">
+                                <span class="text-green-600 mr-3 text-xl">✓</span>
+                                <span>Unlimited contract analysis</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-green-600 mr-3 text-xl">✓</span>
+                                <span>4-point business intelligence</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-green-600 mr-3 text-xl">✓</span>
+                                <span>Risk assessment & recommendations</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-green-600 mr-3 text-xl">✓</span>
+                                <span>Export & share reports</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-green-600 mr-3 text-xl">✓</span>
+                                <span>Priority support</span>
+                            </li>
+                        </ul>
+                        <button id="pricingGetStartedBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                            Get Started Now
+                        </button>
+                        <p class="text-sm text-gray-500 mt-4">Cancel anytime. No contracts.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
                         <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                            <i data-lucide="file-text" class="w-5 h-5 text-white"></i>
+                            <span class="text-white font-bold text-sm">📄</span>
                         </div>
-                        <span class="text-2xl font-bold gradient-text">Contract Navigator</span>
+                        <span class="text-xl font-bold">Contract Navigator</span>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-gray-600" id="userEmail"></span>
-                        <button id="signOutBtn" class="text-gray-600 hover:text-red-600 transition-colors">Sign Out</button>
-                    </div>
+                    <p class="text-gray-300">Professional AI contract analysis for smarter business decisions.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#features" class="hover:text-white transition-colors">Features</a></li>
+                        <li><a href="#pricing" class="hover:text-white transition-colors">Pricing</a></li>
+                        <li><a href="#demo" class="hover:text-white transition-colors">Demo</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Support</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Data Security</a></li>
+                    </ul>
                 </div>
             </div>
-        </div>
-
-        <div class="container mx-auto px-6 py-8">
-            <div class="grid lg:grid-cols-4 gap-8">
-                <!-- Sidebar -->
-                <div class="lg:col-span-1">
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <nav class="space-y-2">
-                            <button class="dashboard-nav-btn w-full text-left px-3 py-2 rounded-lg bg-blue-50 text-blue-600 font-medium" data-section="overview">
-                                <i data-lucide="home" class="w-4 h-4 inline mr-2"></i>
-                                Overview
-                            </button>
-                            <button class="dashboard-nav-btn w-full text-left px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50" data-section="analyze">
-                                <i data-lucide="upload" class="w-4 h-4 inline mr-2"></i>
-                                Analyze Contract
-                            </button>
-                            <button class="dashboard-nav-btn w-full text-left px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50" data-section="history">
-                                <i data-lucide="clock" class="w-4 h-4 inline mr-2"></i>
-                                Analysis History
-                            </button>
-                            <button class="dashboard-nav-btn w-full text-left px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50" data-section="settings">
-                                <i data-lucide="settings" class="w-4 h-4 inline mr-2"></i>
-                                Settings
-                            </button>
-                        </nav>
-                    </div>
-                </div>
-
-                <!-- Main Content -->
-                <div class="lg:col-span-3">
-                    <!-- Overview Section -->
-                    <div id="overview" class="dashboard-section active">
-                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                            <h2 class="text-2xl font-bold mb-4">Welcome to Contract Navigator</h2>
-                            <p class="text-gray-600 mb-6">Start analyzing your contracts with professional AI-powered insights.</p>
-                            <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors" onclick="showDashboardSection('analyze')">
-                                Analyze Your First Contract
-                            </button>
-                        </div>
-
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div class="bg-white rounded-lg shadow-sm p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3 class="text-lg font-semibold">Recent Analysis</h3>
-                                    <i data-lucide="file-text" class="w-6 h-6 text-blue-600"></i>
-                                </div>
-                                <p class="text-gray-500 text-sm">No contracts analyzed yet</p>
-                            </div>
-
-                            <div class="bg-white rounded-lg shadow-sm p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3 class="text-lg font-semibold">Quick Stats</h3>
-                                    <i data-lucide="bar-chart" class="w-6 h-6 text-green-600"></i>
-                                </div>
-                                <div class="space-y-2">
-                                    <div class="flex justify-between">
-                                        <span class="text-sm text-gray-600">Total Analyses</span>
-                                        <span class="font-medium">0</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-sm text-gray-600">This Month</span>
-                                        <span class="font-medium">0</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Analyze Section -->
-                    <div id="analyze" class="dashboard-section">
-                        <div class="bg-white rounded-lg shadow-sm p-6">
-                            <h2 class="text-2xl font-bold mb-6">Analyze New Contract</h2>
-                            
-                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                                <i data-lucide="upload" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
-                                <h3 class="text-lg font-semibold mb-2">Upload Contract Document</h3>
-                                <p class="text-gray-600 mb-4">Drop your contract file here or click to browse</p>
-                                <input type="file" id="contractUpload" accept=".pdf,.doc,.docx,.txt" class="hidden">
-                                <button onclick="document.getElementById('contractUpload').click()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                                    Choose File
-                                </button>
-                            </div>
-
-                            <div id="analysisProgress" class="hidden mt-8">
-                                <h3 class="text-lg font-bold mb-4">Analyzing Contract...</h3>
-                                <div class="space-y-3">
-                                    <div class="flex items-center">
-                                        <div class="spinner mr-3"></div>
-                                        <span>Processing document...</span>
-                                    </div>
-                                    <div class="bg-gray-200 rounded-full h-2">
-                                        <div class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%" id="uploadProgress"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- History Section -->
-                    <div id="history" class="dashboard-section">
-                        <div class="bg-white rounded-lg shadow-sm p-6">
-                            <h2 class="text-2xl font-bold mb-6">Analysis History</h2>
-                            <div class="text-center py-8">
-                                <i data-lucide="file-text" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
-                                <h3 class="text-lg font-semibold mb-2">No Analysis History</h3>
-                                <p class="text-gray-600 mb-4">Your contract analyses will appear here once you start using the platform.</p>
-                                <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors" onclick="showDashboardSection('analyze')">
-                                    Analyze First Contract
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Settings Section -->
-                    <div id="settings" class="dashboard-section">
-                        <div class="bg-white rounded-lg shadow-sm p-6">
-                            <h2 class="text-2xl font-bold mb-6">Account Settings</h2>
-                            <div class="space-y-6">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                    <input type="email" id="settingsEmail" class="w-full px-3 py-2 border border-gray-300 rounded-lg" readonly>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Subscription Status</label>
-                                    <div class="flex items-center">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            Active
-                                        </span>
-                                        <span class="ml-2 text-sm text-gray-600">Contract Navigator Pro - $49/month</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
+                <p>&copy; 2025 Contract Navigator. All rights reserved.</p>
             </div>
         </div>
-    </div>
+    </footer>
 
     <script>
-        // Global variables
-        let stripe, supabaseClient, currentUser = null;
+        console.log('Contract Navigator initializing...');
 
-        // Initialize when page loads
-        window.addEventListener('load', async function() {
-            // Initialize icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-
-            // Initialize Stripe
-            if (typeof Stripe !== 'undefined') {
-                stripe = Stripe('pk_test_51RqLYw20qgAtFe5auGA9bShL12w6kIsLe6OeP1a1NfNtnTGx9kUgIL1QK9ACefetZF01pfK7LgDUJM3KW5NiTDIe00hLKBC0JV');
-            }
-
-            // Initialize Supabase
-            if (typeof supabase !== 'undefined' && supabase.createClient) {
-                const { createClient } = supabase;
-                supabaseClient = createClient(
-                    'https://ugpetfrmipzsjibhezrq.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVncGV0ZnJtaXB6c2ppYmhlenJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4Nzg5MjYsImV4cCI6MjA3MTQ1NDkyNn0._NUdCXEqf5PexE9b4ifK_ya0eQp2p3kGP5VxeQCLyYs'
-                );
-
-                // Check auth
-                try {
-                    const { data: { session } } = await supabaseClient.auth.getSession();
-                    if (session) {
-                        currentUser = session.user;
-                        showDashboard();
-                    }
-                } catch (error) {
-                    console.log('Auth check failed:', error);
-                }
-            }
-
-            // Initialize event listeners
-            initializeApp();
-        });
-
-        // App initialization
-        function initializeApp() {
-            // Modal handlers
-            const signInBtn = document.getElementById('signInBtn');
-            const closeLogin = document.getElementById('closeLogin');
-            const showSignUp = document.getElementById('showSignUp');
-            const showSignIn = document.getElementById('showSignIn');
-            const signOutBtn = document.getElementById('signOutBtn');
-
-            if (signInBtn) signInBtn.addEventListener('click', () => {
-                showSignInForm();
-                document.getElementById('loginModal').classList.add('active');
-            });
-
-            if (closeLogin) closeLogin.addEventListener('click', () => {
-                document.getElementById('loginModal').classList.remove('active');
-            });
-
-            if (showSignUp) showSignUp.addEventListener('click', showSignUpForm);
-            if (showSignIn) showSignIn.addEventListener('click', showSignInForm);
-            if (signOutBtn) signOutBtn.addEventListener('click', signOut);
-
-            // Form handlers
-            const signInForm = document.getElementById('signInForm');
-            if (signInForm) {
-                signInForm.querySelector('form').addEventListener('submit', handleSignIn);
-            }
-
-            const signUpForm = document.getElementById('signUpForm');
-            if (signUpForm) {
-                signUpForm.querySelector('form').addEventListener('submit', handleSignUp);
-            }
-
-            // Payment buttons
-            const paymentButtons = document.querySelectorAll('#getStartedBtn, #heroGetStartedBtn, #pricingGetStartedBtn, #getFullAnalysisBtn');
-            paymentButtons.forEach(btn => {
-                btn.addEventListener('click', handlePayment);
-            });
-
-            // Demo buttons
-            const tryDemoBtn = document.getElementById('tryDemoBtn');
-            const startDemoBtn = document.getElementById('startDemoBtn');
-
-            if (tryDemoBtn) tryDemoBtn.addEventListener('click', () => {
-                resetDemo();
-                document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
-            });
-
-            if (startDemoBtn) startDemoBtn.addEventListener('click', startDemo);
-
-            // Dashboard navigation
-            document.querySelectorAll('.dashboard-nav-btn').forEach(btn => {
-                btn.addEventListener('click', () => showDashboardSection(btn.dataset.section));
-            });
-
-            // Contract upload
-            const contractUpload = document.getElementById('contractUpload');
-            if (contractUpload) {
-                contractUpload.addEventListener('change', handleFileUpload);
-            }
-
-            // Smooth scrolling
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) target.scrollIntoView({ behavior: 'smooth' });
-                });
-            });
-        }
-
-        // Authentication functions
-        async function signIn(email, password) {
-            if (!supabaseClient) return { success: false, error: 'System not ready' };
-            
-            try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-                
-                currentUser = data.user;
-                showDashboard();
-                return { success: true };
-            } catch (error) {
-                return { success: false, error: error.message };
-            }
-        }
-
-        async function signUp(email, password) {
-            if (!supabaseClient) return { success: false, error: 'System not ready' };
-            
-            try {
-                const { data, error } = await supabaseClient.auth.signUp({ email, password });
-                if (error) throw error;
-                
-                return { success: true, message: 'Check your email for verification' };
-            } catch (error) {
-                return { success: false, error: error.message };
-            }
-        }
-
-        async function signOut() {
-            if (supabaseClient) await supabaseClient.auth.signOut();
-            currentUser = null;
-            showMainSite();
-        }
-
-        // UI functions
-        function showDashboard() {
-            document.getElementById('mainContent').style.display = 'none';
-            document.getElementById('dashboardView').classList.remove('hidden');
-            if (currentUser) {
-                document.getElementById('userEmail').textContent = currentUser.email;
-                document.getElementById('settingsEmail').value = currentUser.email;
-            }
-        }
-
-        function showMainSite() {
-            document.getElementById('mainContent').style.display = 'block';
-            document.getElementById('dashboardView').classList.add('hidden');
-        }
-
-        function showDashboardSection(sectionId) {
-            document.querySelectorAll('.dashboard-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-            
-            document.querySelectorAll('.dashboard-nav-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-50', 'text-blue-600', 'font-medium');
-                btn.classList.add('text-gray-600');
-            });
-            
-            const activeBtn = document.querySelector(`[data-section="${sectionId}"]`);
-            if (activeBtn) {
-                activeBtn.classList.remove('text-gray-600');
-                activeBtn.classList.add('bg-blue-50', 'text-blue-600', 'font-medium');
-            }
-        }
-
-        function showMessage(message, isError = false) {
-            const messageDiv = document.getElementById('authMessage');
-            const messageText = document.getElementById('authMessageText');
-            
-            if (messageDiv && messageText) {
-                messageText.textContent = message;
-                messageDiv.className = `mt-4 p-3 rounded-lg ${isError ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`;
-                messageDiv.classList.remove('hidden');
-                setTimeout(() => messageDiv.classList.add('hidden'), 5000);
-            }
-        }
-
-        function showSignUpForm() {
-            document.getElementById('signInForm').classList.add('hidden');
-            document.getElementById('signUpForm').classList.remove('hidden');
-        }
-
-        function showSignInForm() {
-            document.getElementById('signUpForm').classList.add('hidden');
-            document.getElementById('signInForm').classList.remove('hidden');
-        }
-
-        // Event handlers
-        async function handleSignIn(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            
-            if (!email || !password) {
-                showMessage('Please enter both email and password', true);
-                return;
-            }
-            
-            const submitBtn = document.getElementById('signInSubmit');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Signing In...';
-            submitBtn.disabled = true;
-            
-            const result = await signIn(email, password);
-            
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-            
-            if (result.success) {
-                document.getElementById('loginModal').classList.remove('active');
-                showMessage('Welcome back!');
-            } else {
-                showMessage(result.error || 'Sign in failed', true);
-            }
-        }
-
-        async function handleSignUp(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('signUpEmail').value.trim();
-            const password = document.getElementById('signUpPassword').value;
-            
-            if (!email || !password) {
-                showMessage('Please enter both email and password', true);
-                return;
-            }
-            
-            if (password.length < 6) {
-                showMessage('Password must be at least 6 characters', true);
-                return;
-            }
-            
-            const submitBtn = document.getElementById('signUpSubmit');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Creating Account...';
-            submitBtn.disabled = true;
-            
-            const result = await signUp(email, password);
-            
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-            
-            if (result.success) {
-                showMessage(result.message);
-                showSignInForm();
-            } else {
-                showMessage(result.error || 'Account creation failed', true);
-            }
-        }
-
-        async function handlePayment() {
-            if (!stripe) {
-                alert('Payment system loading. Please try again.');
-                return;
-            }
-
-            try {
-                const response = await fetch('/.netlify/functions/create-checkout-session', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ priceId: 'price_1RyrlZQqgAtFeSaKNS2uE13' })
-                });
-
-                if (!response.ok) throw new Error('Network error');
-
-                const { sessionId } = await response.json();
-                const { error } = await stripe.redirectToCheckout({ sessionId });
-
-                if (error) {
-                    console.error('Checkout error:', error);
-                    alert('Payment system temporarily unavailable');
-                }
-            } catch (err) {
-                console.error('Payment error:', err);
-                alert('Payment system temporarily unavailable');
-            }
-        }
-
-        function handleFileUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            document.getElementById('analysisProgress').classList.remove('hidden');
-            
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 20;
-                if (progress > 100) progress = 100;
-                
-                document.getElementById('uploadProgress').style.width = progress + '%';
-                
-                if (progress === 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        alert('Contract analysis complete! Full functionality coming soon.');
-                        document.getElementById('analysisProgress').classList.add('hidden');
-                        document.getElementById('uploadProgress').style.width = '0%';
-                    }, 1000);
-                }
-            }, 200);
-        }
-
-        // Demo functions
+        // Demo functionality
         function startDemo() {
-            const upload = document.getElementById('demoUpload');
-            const analysis = document.getElementById('demoAnalysis');
-            const results = document.getElementById('demoResults');
+            console.log('Starting demo animation...');
             
-            resetDemo();
-            
-            if (upload) upload.classList.add('hidden');
-            if (analysis) analysis.classList.remove('hidden');
+            // Hide upload, show analysis
+            document.getElementById('demoUpload').classList.add('hidden');
+            document.getElementById('demoAnalysis').classList.remove('hidden');
             
             const steps = [
                 { spinner: 'spinner1', step: 'step1', check: 'check1', progress: 'progress1', duration: 2000 },
@@ -1005,8 +436,9 @@
             ];
             
             let delay = 0;
-            steps.forEach((step, index) => {
+            steps.forEach((stepData, index) => {
                 setTimeout(() => {
+                    // Complete previous step
                     if (index > 0) {
                         const prevSpinner = document.getElementById(steps[index-1].spinner);
                         const prevCheck = document.getElementById(steps[index-1].check);
@@ -1020,59 +452,66 @@
                         }
                     }
                     
-                    const spinner = document.getElementById(step.spinner);
-                    const stepEl = document.getElementById(step.step);
-                    const progress = document.getElementById(step.progress);
+                    // Start current step
+                    const currentSpinner = document.getElementById(stepData.spinner);
+                    const currentStep = document.getElementById(stepData.step);
+                    const currentProgress = document.getElementById(stepData.progress);
                     
-                    if (spinner) spinner.classList.remove('hidden');
-                    if (stepEl) {
-                        stepEl.classList.remove('text-gray-400');
-                        stepEl.classList.add('text-gray-700');
+                    if (currentSpinner) currentSpinner.classList.remove('hidden');
+                    if (currentStep) {
+                        currentStep.classList.remove('text-gray-400');
+                        currentStep.classList.add('text-gray-700');
                     }
                     
+                    // Animate progress bar
                     setTimeout(() => {
-                        if (progress) progress.style.width = '100%';
+                        if (currentProgress) currentProgress.style.width = '100%';
                     }, 200);
                     
+                    // Complete final step
                     if (index === steps.length - 1) {
                         setTimeout(() => {
-                            if (spinner) spinner.style.display = 'none';
-                            const check = document.getElementById(step.check);
-                            if (check) check.classList.remove('hidden');
-                            if (stepEl) {
-                                stepEl.classList.remove('text-gray-700');
-                                stepEl.classList.add('text-green-600');
+                            if (currentSpinner) currentSpinner.style.display = 'none';
+                            const currentCheck = document.getElementById(stepData.check);
+                            if (currentCheck) currentCheck.classList.remove('hidden');
+                            if (currentStep) {
+                                currentStep.classList.remove('text-gray-700');
+                                currentStep.classList.add('text-green-600');
                             }
                             
-                            const complete = document.getElementById('analysisComplete');
-                            if (complete) complete.classList.remove('hidden');
+                            // Show completion message
+                            const analysisComplete = document.getElementById('analysisComplete');
+                            if (analysisComplete) analysisComplete.classList.remove('hidden');
                             
+                            // Show results after delay
                             setTimeout(() => {
-                                if (analysis) analysis.classList.add('hidden');
+                                document.getElementById('demoAnalysis').classList.add('hidden');
+                                const results = document.getElementById('demoResults');
                                 if (results) {
                                     results.style.display = 'block';
                                     results.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                 }
                             }, 1500);
-                        }, step.duration);
+                        }, stepData.duration);
                     }
                 }, delay);
                 
-                delay += step.duration;
+                delay += stepData.duration;
             });
         }
 
         function resetDemo() {
-            const upload = document.getElementById('demoUpload');
-            const analysis = document.getElementById('demoAnalysis');
-            const results = document.getElementById('demoResults');
-            const complete = document.getElementById('analysisComplete');
+            console.log('Resetting demo...');
             
-            if (upload) upload.classList.remove('hidden');
-            if (analysis) analysis.classList.add('hidden');
-            if (results) results.style.display = 'none';
-            if (complete) complete.classList.add('hidden');
+            // Show upload, hide others
+            document.getElementById('demoUpload').classList.remove('hidden');
+            document.getElementById('demoAnalysis').classList.add('hidden');
+            document.getElementById('demoResults').style.display = 'none';
             
+            const analysisComplete = document.getElementById('analysisComplete');
+            if (analysisComplete) analysisComplete.classList.add('hidden');
+            
+            // Reset all steps
             for (let i = 1; i <= 4; i++) {
                 const spinner = document.getElementById(`spinner${i}`);
                 const step = document.getElementById(`step${i}`);
@@ -1085,9 +524,69 @@
                 }
                 if (check) check.classList.add('hidden');
                 if (progress) progress.style.width = '0%';
-                if (step) step.className = i === 1 ? 'text-gray-700' : 'text-gray-400';
+                if (step) {
+                    step.className = i === 1 ? 'text-gray-700' : 'text-gray-400';
+                }
             }
         }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, setting up event listeners...');
+            
+            // Demo buttons
+            const tryDemoBtn = document.getElementById('tryDemoBtn');
+            const startDemoBtn = document.getElementById('startDemoBtn');
+
+            if (tryDemoBtn) {
+                tryDemoBtn.addEventListener('click', function() {
+                    console.log('Try demo clicked');
+                    resetDemo();
+                    document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+
+            if (startDemoBtn) {
+                startDemoBtn.addEventListener('click', function() {
+                    console.log('Start demo clicked');
+                    startDemo();
+                });
+            }
+
+            // Payment buttons
+            const paymentButtons = [
+                'getStartedBtn',
+                'heroGetStartedBtn', 
+                'pricingGetStartedBtn',
+                'getFullAnalysisBtn'
+            ];
+            
+            paymentButtons.forEach(buttonId => {
+                const button = document.getElementById(buttonId);
+                if (button) {
+                    button.addEventListener('click', function() {
+                        console.log(`${buttonId} clicked`);
+                        alert('Payment integration: This would redirect to Stripe checkout for $49/month subscription');
+                    });
+                }
+            });
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            console.log('All event listeners initialized successfully!');
+        });
+        
+        console.log('Contract Navigator script loaded!');
     </script>
 </body>
 </html>
