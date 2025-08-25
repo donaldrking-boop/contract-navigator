@@ -533,6 +533,7 @@
                                 </table>
                             </div>
                         </div>
+                    </div>
 
                     <!-- Upload Section -->
                     <div id="uploadContent" class="dashboard-content hidden">
@@ -551,7 +552,6 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
                     </div>
 
                     <!-- History Section -->
@@ -859,8 +859,8 @@
                     <span class="font-bold">$49.00</span>
                 </div>
                 <div class="flex justify-between items-center text-sm text-gray-600">
-                    <span>First 7 days free</span>
-                    <span>Then $49.00/month</span>
+                    <span>Monthly subscription</span>
+                    <span>Immediate access</span>
                 </div>
             </div>
             
@@ -945,25 +945,8 @@
             signUp();
         });
 
-        // Upload new contract button - setup after DOM loads
-        document.addEventListener('DOMContentLoaded', () => {
-            const uploadNewBtn = document.getElementById('uploadNewBtn');
-            if (uploadNewBtn) {
-                uploadNewBtn.addEventListener('click', () => {
-                    showDashboardSection('upload');
-                    // Update active nav item
-                    document.querySelectorAll('.nav-item').forEach(nav => {
-                        nav.classList.remove('bg-indigo-50', 'text-indigo-700');
-                        nav.classList.add('text-gray-600');
-                    });
-                    const uploadNav = document.querySelector('[data-section="upload"]');
-                    if (uploadNav) {
-                        uploadNav.classList.remove('text-gray-600');
-                        uploadNav.classList.add('bg-indigo-50', 'text-indigo-700');
-                    }
-                });
-            }
-        });
+        // Payment
+        document.getElementById('startPaymentBtn').addEventListener('click', () => startPayment());
 
         // File upload functionality for both upload areas
         const setupFileUpload = (browseBtnId, dropZoneId, fileInputId) => {
@@ -1010,15 +993,6 @@
                 });
             }
         };
-        
-        // Setup file uploads for both areas after DOM loads
-        document.addEventListener('DOMContentLoaded', () => {
-            setupFileUpload('browseBtn', 'dropZone', 'fileInput');
-            setupFileUpload('browseBtn2', 'dropZone2', 'fileInput2');
-        });
-
-        // Payment
-        document.getElementById('startPaymentBtn').addEventListener('click', () => startPayment());
 
         // Functions
         function showSignIn() {
@@ -1098,61 +1072,6 @@
                 console.error('Error:', error);
                 alert('Payment error. Please try again.');
             });
-        }
-        
-        function handleFileUpload(file) {
-            // Validate file type
-            const allowedTypes = ['.pdf', '.doc', '.docx'];
-            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-            
-            if (!allowedTypes.includes(fileExtension)) {
-                alert('Please upload a PDF, DOC, or DOCX file.');
-                return;
-            }
-            
-            // Show upload progress
-            const uploadProgress = document.getElementById('uploadProgress');
-            const uploadPercent = document.getElementById('uploadPercent');
-            const uploadBar = document.getElementById('uploadBar');
-            const uploadStatus = document.getElementById('uploadStatus');
-            const uploadSuccess = document.getElementById('uploadSuccess');
-            
-            uploadProgress.classList.remove('hidden');
-            uploadSuccess.classList.add('hidden');
-            
-            // Simulate upload progress
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 20;
-                if (progress > 100) progress = 100;
-                
-                uploadPercent.textContent = Math.round(progress) + '%';
-                uploadBar.style.width = progress + '%';
-                
-                // Update status messages
-                if (progress < 30) {
-                    uploadStatus.textContent = 'Uploading file...';
-                } else if (progress < 60) {
-                    uploadStatus.textContent = 'Processing document...';
-                } else if (progress < 90) {
-                    uploadStatus.textContent = 'Starting AI analysis...';
-                } else {
-                    uploadStatus.textContent = 'Finalizing...';
-                }
-                
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        uploadProgress.classList.add('hidden');
-                        uploadSuccess.classList.remove('hidden');
-                        
-                        // Add to recent uploads
-                        setTimeout(() => {
-                            location.reload(); // Simulate navigation to analysis results
-                        }, 2000);
-                    }, 500);
-                }
-            }, 200);
         }
 
         function showDashboard() {
@@ -1259,6 +1178,67 @@
             document.getElementById('progressBar').style.width = '0%';
             document.getElementById('progressPercent').textContent = '0%';
         }
+        
+        function handleFileUpload(file) {
+            // Validate file type
+            const allowedTypes = ['.pdf', '.doc', '.docx'];
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+            
+            if (!allowedTypes.includes(fileExtension)) {
+                alert('Please upload a PDF, DOC, or DOCX file.');
+                return;
+            }
+            
+            // Show upload progress
+            const uploadProgress = document.getElementById('uploadProgress');
+            const uploadPercent = document.getElementById('uploadPercent');
+            const uploadBar = document.getElementById('uploadBar');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const uploadSuccess = document.getElementById('uploadSuccess');
+            
+            if (uploadProgress) {
+                uploadProgress.classList.remove('hidden');
+            }
+            if (uploadSuccess) {
+                uploadSuccess.classList.add('hidden');
+            }
+            
+            // Simulate upload progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress > 100) progress = 100;
+                
+                if (uploadPercent) uploadPercent.textContent = Math.round(progress) + '%';
+                if (uploadBar) uploadBar.style.width = progress + '%';
+                
+                // Update status messages
+                if (uploadStatus) {
+                    if (progress < 30) {
+                        uploadStatus.textContent = 'Uploading file...';
+                    } else if (progress < 60) {
+                        uploadStatus.textContent = 'Processing document...';
+                    } else if (progress < 90) {
+                        uploadStatus.textContent = 'Starting AI analysis...';
+                    } else {
+                        uploadStatus.textContent = 'Finalizing...';
+                    }
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        if (uploadProgress) uploadProgress.classList.add('hidden');
+                        if (uploadSuccess) uploadSuccess.classList.remove('hidden');
+                        
+                        // Add to recent uploads
+                        setTimeout(() => {
+                            location.reload(); // Simulate navigation to analysis results
+                        }, 2000);
+                    }, 500);
+                }
+            }, 200);
+        }
 
         // Close modals when clicking outside
         [signInModal, signUpModal, paymentModal].forEach(modal => {
@@ -1272,6 +1252,28 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Contract Navigator loaded successfully');
+            
+            // Setup file uploads for both areas
+            setupFileUpload('browseBtn', 'dropZone', 'fileInput');
+            setupFileUpload('browseBtn2', 'dropZone2', 'fileInput2');
+            
+            // Setup upload new contract button
+            const uploadNewBtn = document.getElementById('uploadNewBtn');
+            if (uploadNewBtn) {
+                uploadNewBtn.addEventListener('click', () => {
+                    showDashboardSection('upload');
+                    // Update active nav item
+                    document.querySelectorAll('.nav-item').forEach(nav => {
+                        nav.classList.remove('bg-indigo-50', 'text-indigo-700');
+                        nav.classList.add('text-gray-600');
+                    });
+                    const uploadNav = document.querySelector('[data-section="upload"]');
+                    if (uploadNav) {
+                        uploadNav.classList.remove('text-gray-600');
+                        uploadNav.classList.add('bg-indigo-50', 'text-indigo-700');
+                    }
+                });
+            }
         });
     </script>
 </body>
