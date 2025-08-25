@@ -1,419 +1,464 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Contract Navigator</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container { max-width: 1000px; margin: 0 auto; }
-        .success-banner {
-            background: #22c55e;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-        .header {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px;
-        }
-        .card { 
-            background: white; 
-            padding: 25px; 
-            border-radius: 12px; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-        .upload-zone {
-            border: 3px dashed #e5e7eb;
-            border-radius: 12px;
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 15px 0;
-        }
-        .upload-zone:hover {
-            border-color: #3b82f6;
-            background: #f8fafc;
-        }
-        .btn { 
-            background: #3b82f6; 
-            color: white; 
-            border: none; 
-            padding: 15px 25px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 15px;
-        }
-        .btn:hover { 
-            background: #2563eb; 
-            transform: translateY(-1px);
-        }
-        .btn-danger { background: #ef4444; width: auto; padding: 10px 20px; }
-        .btn-danger:hover { background: #dc2626; }
-        .status-badge { 
-            background: #22c55e; 
-            color: white; 
-            padding: 5px 12px; 
-            border-radius: 20px; 
-            font-size: 12px; 
-            font-weight: 600;
-        }
-        h1 { color: #1f2937; margin: 0; }
-        h2 { color: #1f2937; margin-bottom: 15px; }
-        h3 { color: #374151; margin: 10px 0; }
-        p { color: #6b7280; line-height: 1.6; }
-        .file-icon { font-size: 48px; margin-bottom: 10px; }
-        .analysis-item {
-            border: 1px solid #e5e7eb;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 10px 0;
-        }
-        .price { color: #22c55e; font-weight: 700; font-size: 18px; }
-        .features { list-style: none; padding: 0; }
-        .features li { 
-            padding: 8px 0; 
-            border-bottom: 1px solid #f3f4f6; 
-            color: #6b7280;
-        }
-        .features li:before { content: "✓"; color: #22c55e; font-weight: bold; margin-right: 8px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- Success Banner -->
-        <div class="success-banner">
-            🎉 Dashboard Successfully Fixed! Your $49/month revenue stream is now ACTIVE
-        </div>
+// Enhanced Backend with Email Notifications
+const express = require('express');
+const multer = require('multer');
+const cors = require('cors');
+const nodemailer = require('nodemailer');
+const fs = require('fs').promises;
+const path = require('path');
+require('dotenv').config();
 
-        <!-- Header -->
-        <div class="header">
-            <div>
-                <h1>Contract Navigator Dashboard</h1>
-                <p style="margin: 5px 0 0 0;">Professional contract analysis platform</p>
-            </div>
-            <button class="btn btn-danger" onclick="signOut()">Sign Out</button>
-        </div>
+const app = express();
+const PORT = process.env.PORT || 3001;
 
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-            <!-- Upload Section -->
-            <div class="card">
-                <h2>📄 Start New Analysis</h2>
-                <p>Upload your contract for professional analysis with annotated PDFs and detailed reports.</p>
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public'));
+
+// Email configuration
+const emailTransporter = nodemailer.createTransporter({
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: false,
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+    }
+});
+
+// In-memory storage (use database in production)
+const companies = new Map();
+const users = new Map();
+const contracts = new Map();
+
+// Initialize sample data
+function initializeSampleData() {
+    // Sample company
+    const companyId = 'company_001';
+    companies.set(companyId, {
+        id: companyId,
+        name: 'TechCorp Solutions',
+        subscription_status: 'active',
+        created_at: new Date()
+    });
+
+    // Sample users
+    const teamEmails = [
+        'john@techcorp.com',
+        'sarah@techcorp.com', 
+        'mike@techcorp.com',
+        'lisa@techcorp.com'
+    ];
+
+    teamEmails.forEach((email, index) => {
+        const userId = `user_${index + 1}`;
+        users.set(userId, {
+            id: userId,
+            company_id: companyId,
+            email: email,
+            name: email.split('@')[0],
+            role: index === 0 ? 'admin' : 'member',
+            active: index < 3, // First 3 are active
+            created_at: new Date()
+        });
+    });
+}
+
+initializeSampleData();
+
+// File upload configuration
+const storage = multer.diskStorage({
+    destination: 'uploads/',
+    filename: (req, file, cb) => {
+        const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
+        cb(null, uniqueName);
+    }
+});
+
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 10 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type'));
+        }
+    }
+});
+
+// Create uploads directory
+const createUploadsDir = async () => {
+    try {
+        await fs.access('uploads');
+    } catch {
+        await fs.mkdir('uploads');
+    }
+};
+createUploadsDir();
+
+// Email templates
+const EMAIL_TEMPLATES = {
+    newContract: (contractData, uploaderName, recipientName) => ({
+        subject: `New Contract Analysis Available - ${contractData.filename}`,
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 8px; color: white; text-align: center;">
+                    <h1 style="margin: 0;">Contract Navigator</h1>
+                    <p style="margin: 10px 0 0 0;">New Contract Analysis Ready</p>
+                </div>
                 
-                <div class="upload-zone" onclick="document.getElementById('contractFile').click()">
-                    <div class="file-icon">📁</div>
-                    <h3>Drop your contract here</h3>
-                    <p>or click to browse files</p>
-                    <p style="font-size: 14px; color: #9ca3af; margin-top: 8px;">
-                        Supported: PDF, DOC, DOCX • Maximum 10MB
+                <div style="padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+                    <h2 style="color: #1f2937; margin-bottom: 20px;">Hi ${recipientName},</h2>
+                    
+                    <p style="color: #374151; line-height: 1.6;">A new contract has been analyzed and is ready for your review:</p>
+                    
+                    <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <table style="width: 100%;">
+                            <tr><td style="padding: 5px 0; color: #6b7280;"><strong>📄 Contract:</strong></td><td style="padding: 5px 0;">${contractData.filename}</td></tr>
+                            <tr><td style="padding: 5px 0; color: #6b7280;"><strong>👤 Uploaded by:</strong></td><td style="padding: 5px 0;">${uploaderName}</td></tr>
+                            <tr><td style="padding: 5px 0; color: #6b7280;"><strong>📅 Date:</strong></td><td style="padding: 5px 0;">${new Date().toLocaleDateString()}</td></tr>
+                            <tr><td style="padding: 5px 0; color: #6b7280;"><strong>⚖️ Risk Level:</strong></td><td style="padding: 5px 0;"><span style="background: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${contractData.riskLevel}</span></td></tr>
+                        </table>
+                    </div>
+                    
+                    <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 15px; margin: 20px 0;">
+                        <h4 style="margin: 0 0 10px 0; color: #dc2626;">Key Risks Identified:</h4>
+                        <ul style="margin: 0; padding-left: 20px; color: #374151;">
+                            ${contractData.risks ? contractData.risks.slice(0, 3).map(risk => 
+                                `<li><strong>${risk.type} RISK:</strong> ${risk.title}</li>`
+                            ).join('') : '<li>Analysis in progress...</li>'}
+                        </ul>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${process.env.FRONTEND_URL}/dashboard.html?contract=${contractData.id}" 
+                           style="background: #3b82f6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600;">
+                            View Complete Analysis
+                        </a>
+                    </div>
+                    
+                    <p style="color: #6b7280; font-size: 14px; line-height: 1.6;">
+                        Login to your Contract Navigator dashboard to view the complete analysis with highlighted risks, margin notes, and downloadable annotated PDF.
+                    </p>
+                    
+                    <hr style="margin: 30px 0; border: none; height: 1px; background: #e5e7eb;">
+                    
+                    <p style="color: #9ca3af; font-size: 12px; text-align: center;">
+                        Best regards,<br>
+                        The Contract Navigator Team<br>
+                        <a href="${process.env.FRONTEND_URL}" style="color: #3b82f6;">Contract Navigator</a>
                     </p>
                 </div>
-                
-                <input type="file" id="contractFile" accept=".pdf,.doc,.docx" style="display: none;" onchange="handleFileUpload(event)">
-                
-                <div style="background: #f8fafc; border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; margin: 15px 0;">
-                    <div class="price">$49 per analysis</div>
-                    <p style="font-size: 14px; margin: 5px 0 0 0;">One-time payment • Instant processing</p>
-                </div>
-                
-                <button class="btn" onclick="document.getElementById('contractFile').click()">
-                    📤 Upload & Analyze Contract
-                </button>
-                
-                <div id="uploadStatus"></div>
             </div>
-
-            <!-- Analysis History -->
-            <div class="card">
-                <h2>📊 Recent Analyses</h2>
-                <div id="analysisHistory">
-                    <div style="text-align: center; padding: 40px 20px; color: #9ca3af;">
-                        <div style="font-size: 48px; margin-bottom: 15px;">📋</div>
-                        <h3 style="color: #9ca3af;">No analyses yet</h3>
-                        <p>Upload your first contract to get started with professional analysis!</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- What You Get -->
-            <div class="card">
-                <h2>✨ What You Get</h2>
-                <ul class="features">
-                    <li>Professional annotated PDF with color-coded risk areas</li>
-                    <li>Detailed margin notes highlighting key concerns</li>
-                    <li>Comprehensive analysis report with executive summary</li>
-                    <li>Risk assessment and compliance checklist</li>
-                    <li>Actionable recommendations and next steps</li>
-                </ul>
-                <div style="margin-top: 20px; text-align: center;">
-                    <span class="price">$49 per contract</span>
-                    <p style="font-size: 14px; color: #6b7280;">Professional analysis in minutes</p>
-                </div>
-            </div>
-
-            <!-- Account Status -->
-            <div class="card">
-                <h2>👤 Account Status</h2>
-                
-                <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0; padding: 15px; border: 1px solid #e5e7eb; border-radius: 8px;">
-                    <div>
-                        <h3 style="margin: 0;">Active User</h3>
-                        <p style="margin: 5px 0 0 0; font-size: 14px;">Ready to analyze contracts</p>
-                    </div>
-                    <span class="status-badge">READY</span>
+        `
+    }),
+    
+    teamInvite: (inviterName, companyName, inviteLink) => ({
+        subject: `You've been invited to join ${companyName} on Contract Navigator`,
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 8px; color: white; text-align: center;">
+                    <h1 style="margin: 0;">Contract Navigator</h1>
+                    <p style="margin: 10px 0 0 0;">Team Invitation</p>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
-                    <div style="text-align: center; padding: 15px; border: 1px solid #e5e7eb; border-radius: 8px;">
-                        <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">0</div>
-                        <div style="font-size: 12px; color: #6b7280;">Total Analyses</div>
+                <div style="padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+                    <h2 style="color: #1f2937; margin-bottom: 20px;">Welcome to the team!</h2>
+                    
+                    <p style="color: #374151; line-height: 1.6;">${inviterName} has invited you to join <strong>${companyName}</strong> on Contract Navigator.</p>
+                    
+                    <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <h3 style="margin: 0 0 15px 0; color: #059669;">What you'll get access to:</h3>
+                        <ul style="margin: 0; padding-left: 20px; color: #374151;">
+                            <li>Company contract library with all analyses</li>
+                            <li>Real-time notifications for new contracts</li>
+                            <li>AI-powered risk analysis and recommendations</li>
+                            <li>Annotated PDFs with highlighted risk areas</li>
+                            <li>Team collaboration and shared insights</li>
+                        </ul>
                     </div>
-                    <div style="text-align: center; padding: 15px; border: 1px solid #e5e7eb; border-radius: 8px;">
-                        <div style="font-size: 24px; font-weight: bold; color: #22c55e;">$49</div>
-                        <div style="font-size: 12px; color: #6b7280;">Per Analysis</div>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${inviteLink}" 
+                           style="background: #22c55e; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600;">
+                            Accept Invitation & Join Team
+                        </a>
                     </div>
+                    
+                    <p style="color: #6b7280; font-size: 14px; line-height: 1.6;">
+                        This invitation will expire in 7 days. If you have any questions, please contact ${inviterName} or reply to this email.
+                    </p>
                 </div>
-                
-                <p style="text-align: center; font-size: 14px; color: #6b7280;">
-                    Pay per use • No monthly subscriptions
-                </p>
             </div>
-        </div>
-    </div>
+        `
+    })
+};
 
-    <script>
-        console.log('✅ Contract Navigator Dashboard Loaded Successfully');
-        console.log('🎯 Revenue stream is ACTIVE - customers can now pay $49');
+// Email sending functions
+async function sendContractNotifications(contractData, uploaderEmail) {
+    try {
+        const uploader = Array.from(users.values()).find(u => u.email === uploaderEmail);
+        if (!uploader) {
+            throw new Error('Uploader not found');
+        }
 
-        // Track page load
-        window.addEventListener('load', function() {
-            console.log('✅ Dashboard fully loaded - 404 error fixed!');
+        const company = companies.get(uploader.company_id);
+        const companyUsers = Array.from(users.values())
+            .filter(u => u.company_id === uploader.company_id && u.active && u.email !== uploaderEmail);
+
+        console.log(`📧 Sending notifications to ${companyUsers.length} team members`);
+
+        const emailPromises = companyUsers.map(async (user) => {
+            const emailTemplate = EMAIL_TEMPLATES.newContract(contractData, uploader.name, user.name);
+            
+            try {
+                await emailTransporter.sendMail({
+                    from: process.env.SMTP_USER,
+                    to: user.email,
+                    subject: emailTemplate.subject,
+                    html: emailTemplate.html
+                });
+                
+                console.log(`✅ Email sent to ${user.email}`);
+                return { email: user.email, status: 'sent' };
+            } catch (error) {
+                console.error(`❌ Failed to send email to ${user.email}:`, error);
+                return { email: user.email, status: 'failed', error: error.message };
+            }
         });
 
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            const statusDiv = document.getElementById('uploadStatus');
-            
-            if (!file) return;
-            
-            console.log('📄 File selected:', file.name, '(' + (file.size/1024/1024).toFixed(2) + ' MB)');
-            
-            // Clear previous status
-            statusDiv.innerHTML = '';
-            
-            // Validate file size (10MB limit)
-            if (file.size > 10 * 1024 * 1024) {
-                statusDiv.innerHTML = `
-                    <div style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 15px; border-radius: 8px; margin-top: 15px;">
-                        ❌ File too large. Maximum size is 10MB.
-                    </div>
-                `;
-                return;
-            }
-            
-            // Validate file type
-            const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-            if (!allowedTypes.includes(file.type)) {
-                statusDiv.innerHTML = `
-                    <div style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 15px; border-radius: 8px; margin-top: 15px;">
-                        ❌ Invalid file type. Please upload PDF, DOC, or DOCX files only.
-                    </div>
-                `;
-                return;
-            }
-            
-            // Show file ready message
-            statusDiv.innerHTML = `
-                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #059669; padding: 15px; border-radius: 8px; margin-top: 15px;">
-                    ✅ File "${file.name}" ready for analysis!<br>
-                    <small style="color: #6b7280;">Click below to proceed to payment...</small>
-                </div>
-            `;
-            
-            // Auto-trigger payment flow
-            setTimeout(() => {
-                initiatePayment(file);
-            }, 2000);
-        }
-        
-        function initiatePayment(file) {
-            console.log('💳 Initiating payment for:', file.name);
-            
-            // Show payment confirmation dialog
-            const proceed = confirm(`Ready to analyze your contract?
+        const emailResults = await Promise.all(emailPromises);
+        return emailResults;
 
-File: ${file.name}
-Size: ${(file.size/1024/1024).toFixed(2)} MB
-Analysis Cost: $49.00
+    } catch (error) {
+        console.error('❌ Error sending contract notifications:', error);
+        throw error;
+    }
+}
 
-✅ Professional annotated PDF
-✅ Comprehensive risk analysis  
-✅ Detailed margin notes
-✅ Executive summary report
+async function sendTeamInvite(inviterEmail, inviteeEmail, companyId) {
+    try {
+        const inviter = Array.from(users.values()).find(u => u.email === inviterEmail);
+        const company = companies.get(companyId);
+        
+        const inviteLink = `${process.env.FRONTEND_URL}/join?token=${generateInviteToken(inviteeEmail, companyId)}`;
+        const emailTemplate = EMAIL_TEMPLATES.teamInvite(inviter.name, company.name, inviteLink);
 
-Click OK to proceed to secure payment.`);
-            
-            if (proceed) {
-                // Show processing message
-                document.getElementById('uploadStatus').innerHTML = `
-                    <div style="background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 15px; border-radius: 8px; margin-top: 15px;">
-                        ⏳ Redirecting to secure Stripe payment...
-                        <div style="margin-top: 8px; font-size: 14px; color: #6b7280;">
-                            You'll be redirected back here after payment
-                        </div>
-                    </div>
-                `;
-                
-                // Here you would integrate with Stripe
-                // For demo, simulate success after delay
-                setTimeout(() => {
-                    simulatePaymentSuccess(file.name);
-                }, 3000);
-                
-                console.log('🔄 [INTEGRATION POINT] Launch Stripe Checkout here');
-            } else {
-                // User cancelled
-                document.getElementById('uploadStatus').innerHTML = `
-                    <div style="background: #f8fafc; border: 1px solid #e5e7eb; color: #6b7280; padding: 15px; border-radius: 8px; margin-top: 15px;">
-                        Payment cancelled. Your file is ready whenever you're ready to proceed.
-                    </div>
-                `;
-            }
-        }
-        
-        function simulatePaymentSuccess(filename) {
-            console.log('✅ Payment successful for:', filename);
-            
-            // Show success message
-            document.getElementById('uploadStatus').innerHTML = `
-                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #059669; padding: 15px; border-radius: 8px; margin-top: 15px;">
-                    🎉 Payment successful! Analysis started.<br>
-                    <small>You'll receive an email notification when your annotated PDF is ready (typically 5-10 minutes).</small>
-                </div>
-            `;
-            
-            // Add to analysis history
-            addToHistory(filename);
-            
-            // Update stats
-            updateStats();
-        }
-        
-        function addToHistory(filename) {
-            const historyDiv = document.getElementById('analysisHistory');
-            const timestamp = new Date();
-            const dateStr = timestamp.toLocaleDateString();
-            const timeStr = timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            historyDiv.innerHTML = `
-                <div class="analysis-item">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                        <div>
-                            <h3 style="margin: 0 0 5px 0; color: #1f2937;">${filename}</h3>
-                            <p style="margin: 0; font-size: 14px; color: #6b7280;">
-                                Uploaded: ${dateStr} at ${timeStr}
-                            </p>
-                        </div>
-                        <span style="background: #f59e0b; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
-                            Processing
-                        </span>
-                    </div>
-                    <div style="background: #f8fafc; padding: 12px; border-radius: 6px; margin-top: 10px;">
-                        <p style="margin: 0; font-size: 14px; color: #6b7280;">
-                            ⏳ AI analysis in progress... Estimated completion: 5-10 minutes
-                        </p>
-                    </div>
-                    <button style="background: #6b7280; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 14px; margin-top: 10px;" onclick="checkProgress('${filename}')">
-                        Check Progress
-                    </button>
-                </div>
-            ` + (historyDiv.innerHTML.includes('No analyses yet') ? '' : historyDiv.innerHTML);
-        }
-        
-        function checkProgress(filename) {
-            alert(`Analysis Progress: "${filename}"
-
-✅ Payment processed ($49.00)
-✅ Document uploaded and validated  
-✅ AI analysis initiated
-⏳ Generating annotated PDF with risk highlights
-⏳ Creating comprehensive report
-⏳ Preparing margin notes and recommendations
-
-Status: Processing (2-8 minutes remaining)
-
-You'll receive an email notification when complete.`);
-        }
-        
-        function updateStats() {
-            // Update total analyses count
-            const totalItems = document.querySelectorAll('.analysis-item').length;
-            const statsNumber = document.querySelector('[style*="color: #3b82f6"]');
-            if (statsNumber) {
-                statsNumber.textContent = totalItems;
-            }
-        }
-        
-        function signOut() {
-            const confirmed = confirm('Are you sure you want to sign out?');
-            if (confirmed) {
-                console.log('🚪 Signing out user...');
-                alert('✅ You have been signed out successfully.');
-                
-                // Here you would clear session and redirect to homepage
-                // window.location.href = 'index.html';
-                
-                // For demo, just show redirect message
-                setTimeout(() => {
-                    alert('Redirecting to homepage...');
-                }, 1000);
-            }
-        }
-        
-        // Initialize dashboard on load
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎯 Contract Navigator Dashboard initialized');
-            console.log('💰 Revenue stream active - ready for $49 payments');
-            
-            // Optional: Load user's previous analyses from database
-            // loadUserAnalyses();
+        await emailTransporter.sendMail({
+            from: process.env.SMTP_USER,
+            to: inviteeEmail,
+            subject: emailTemplate.subject,
+            html: emailTemplate.html
         });
+
+        console.log(`✅ Team invite sent to ${inviteeEmail}`);
+        return { status: 'sent', email: inviteeEmail };
+
+    } catch (error) {
+        console.error(`❌ Failed to send team invite to ${inviteeEmail}:`, error);
+        throw error;
+    }
+}
+
+function generateInviteToken(email, companyId) {
+    // In production, use proper JWT or secure token generation
+    return Buffer.from(`${email}:${companyId}:${Date.now()}`).toString('base64');
+}
+
+// API Routes
+
+// Upload contract with team notifications
+app.post('/api/upload-contract', upload.single('contract'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        const contractId = Date.now().toString();
+        const uploaderEmail = req.body.uploaderEmail || 'john@techcorp.com'; // In production, get from auth
         
-        // Error handling
-        window.addEventListener('error', function(e) {
-            console.error('Dashboard error:', e.error);
-        });
+        // Store contract
+        const contractData = {
+            id: contractId,
+            filename: req.file.originalname,
+            filePath: req.file.path,
+            uploaderEmail: uploaderEmail,
+            uploadTime: new Date(),
+            status: 'uploaded',
+            riskLevel: 'ANALYZING'
+        };
         
-        window.addEventListener('unhandledrejection', function(e) {
-            console.error('Promise rejection:', e.reason);
+        contracts.set(contractId, contractData);
+
+        // Send notifications to team (async)
+        sendContractNotifications(contractData, uploaderEmail)
+            .then(results => {
+                console.log('📧 Notification results:', results);
+                // Store notification results
+                contractData.notificationResults = results;
+                contracts.set(contractId, contractData);
+            })
+            .catch(error => {
+                console.error('📧 Notification error:', error);
+            });
+
+        res.json({
+            contractId: contractId,
+            filename: req.file.originalname,
+            status: 'uploaded',
+            message: 'Contract uploaded successfully. Team notifications are being sent.'
         });
-    </script>
-</body>
-</html>
+
+    } catch (error) {
+        console.error('Upload error:', error);
+        res.status(500).json({ error: 'Upload failed: ' + error.message });
+    }
+});
+
+// Get contracts for company
+app.get('/api/contracts/:companyId', (req, res) => {
+    try {
+        const { companyId } = req.params;
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        
+        const companyContracts = Array.from(contracts.values())
+            .filter(contract => {
+                const uploader = Array.from(users.values()).find(u => u.email === contract.uploaderEmail);
+                return uploader && uploader.company_id === companyId && contract.uploadTime >= thirtyDaysAgo;
+            })
+            .sort((a, b) => new Date(b.uploadTime) - new Date(a.uploadTime));
+
+        res.json({
+            contracts: companyContracts,
+            total: companyContracts.length
+        });
+
+    } catch (error) {
+        console.error('Error fetching contracts:', error);
+        res.status(500).json({ error: 'Failed to fetch contracts' });
+    }
+});
+
+// Get company team members
+app.get('/api/team/:companyId', (req, res) => {
+    try {
+        const { companyId } = req.params;
+        const company = companies.get(companyId);
+        
+        if (!company) {
+            return res.status(404).json({ error: 'Company not found' });
+        }
+
+        const teamMembers = Array.from(users.values())
+            .filter(u => u.company_id === companyId)
+            .map(user => ({
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                role: user.role,
+                active: user.active,
+                joinDate: user.created_at
+            }));
+
+        res.json({
+            company: company,
+            teamMembers: teamMembers,
+            maxMembers: 5
+        });
+
+    } catch (error) {
+        console.error('Error fetching team:', error);
+        res.status(500).json({ error: 'Failed to fetch team' });
+    }
+});
+
+// Send team invitation
+app.post('/api/invite-team-member', async (req, res) => {
+    try {
+        const { inviterEmail, inviteeEmail, companyId } = req.body;
+
+        if (!inviterEmail || !inviteeEmail || !companyId) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Check if company has space for more members
+        const currentMembers = Array.from(users.values()).filter(u => u.company_id === companyId);
+        if (currentMembers.length >= 5) {
+            return res.status(400).json({ error: 'Maximum team size reached (5 members)' });
+        }
+
+        // Check if user already exists
+        const existingUser = Array.from(users.values()).find(u => u.email === inviteeEmail);
+        if (existingUser) {
+            return res.status(400).json({ error: 'User already exists in system' });
+        }
+
+        // Send invitation email
+        await sendTeamInvite(inviterEmail, inviteeEmail, companyId);
+
+        // Create pending user record
+        const userId = `user_${Date.now()}`;
+        users.set(userId, {
+            id: userId,
+            company_id: companyId,
+            email: inviteeEmail,
+            name: inviteeEmail.split('@')[0],
+            role: 'member',
+            active: false, // Will be activated when they accept
+            invitedBy: inviterEmail,
+            invitedAt: new Date(),
+            created_at: new Date()
+        });
+
+        res.json({
+            message: 'Team invitation sent successfully',
+            inviteeEmail: inviteeEmail,
+            status: 'invited'
+        });
+
+    } catch (error) {
+        console.error('Error sending team invitation:', error);
+        res.status(500).json({ error: 'Failed to send invitation: ' + error.message });
+    }
+});
+
+// Test email endpoint
+app.post('/api/test-email', async (req, res) => {
+    try {
+        const { email } = req.body;
+        
+        await emailTransporter.sendMail({
+            from: process.env.SMTP_USER,
+            to: email || 'test@example.com',
+            subject: 'Contract Navigator - Test Email',
+            html: '<h1>Test email from Contract Navigator!</h1><p>Email system is working correctly.</p>'
+        });
+
+        res.json({ message: 'Test email sent successfully' });
+    } catch (error) {
+        console.error('Test email error:', error);
+        res.status(500).json({ error: 'Test email failed: ' + error.message });
+    }
+});
+
+// Health check
+app.get('/api/health', (req, res) => {
+    res.json({ 
+        status: 'healthy', 
+        timestamp: new Date(),
+        activeCompanies: companies.size,
+        totalUsers: users.size,
+        totalContracts: contracts.size
+    });
+});
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`🚀 Contract Navigator Backend running on port ${PORT}`);
+    console.log(`📧 Email system configured for notifications`);
+    console.log(`👥 Multi-user system ready`);
+    console.log(`📊 Sample data initialized: ${companies.size} companies, ${users.size} users`);
+});
