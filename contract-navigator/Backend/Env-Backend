@@ -7,14 +7,17 @@ CLAUDE_API_KEY=your_claude_api_key_here
 PORT=3001
 NODE_ENV=development
 
+# Email Configuration for Team Notifications
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+
+# Frontend URL (for email links)
+FRONTEND_URL=https://classy-kataifi-c3a38e.netlify.app
+
 # Database (if you add one later)
 # DATABASE_URL=your_database_connection_string
-
-# Email Service (for sending results)
-# SMTP_HOST=your_smtp_host
-# SMTP_PORT=587
-# SMTP_USER=your_email
-# SMTP_PASS=your_password
 
 # File Storage (if using cloud storage)
 # AWS_ACCESS_KEY_ID=your_aws_key
