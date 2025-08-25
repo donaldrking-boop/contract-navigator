@@ -7,7 +7,7 @@ const path = require('path');
 const PDFParser = require('pdf2json');
 const mammoth = require('mammoth');
 const jsPDF = require('jspdf').jsPDF;
-require('dotenv').config();
+require('dotenv').config({ path: './env-backend' });
 
 const app = express();
 const PORT = process.env.PORT || 3001;
