@@ -20,7 +20,7 @@ exports.handler = async (event, context) => {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: 'price_1RyrlZQqgAtFeSaKNS2uE13',
+          price: 'price_1S0RTw20qgAtFeSauyaXneRG',
           quantity: 1,
         },
       ],
@@ -48,3 +48,4 @@ exports.handler = async (event, context) => {
     };
   }
 };
+
