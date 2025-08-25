@@ -3,520 +3,512 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Contract Navigator</title>
+    <title>Contract Navigator - AI-Powered Contract Analysis</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            line-height: 1.6;
+            color: #333;
         }
-        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* Header */
         .header {
             background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0 2rem;
         }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3b82f6;
         }
-        .card { 
-            background: white; 
-            padding: 25px; 
-            border-radius: 12px; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
         }
-        .upload-section {
-            grid-column: 1 / -1;
-        }
-        .upload-zone {
-            border: 3px dashed #e5e7eb;
-            border-radius: 12px;
-            padding: 40px 20px;
-            text-align: center;
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 15px 0;
-        }
-        .upload-zone:hover {
-            border-color: #3b82f6;
-            background: #f8fafc;
-        }
-        .upload-zone.dragover {
-            border-color: #22c55e;
-            background: #f0fdf4;
-        }
-        .btn { 
-            background: #3b82f6; 
-            color: white; 
-            border: none; 
-            padding: 15px 25px; 
-            border-radius: 8px; 
-            cursor: pointer; 
             font-weight: 600;
-            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
             transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 15px;
         }
-        .btn:hover { 
-            background: #2563eb; 
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2563eb;
             transform: translateY(-1px);
         }
-        .btn:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-            transform: none;
+        .btn-secondary {
+            background: transparent;
+            color: #3b82f6;
+            border: 2px solid #3b82f6;
         }
-        .btn-danger { background: #ef4444; width: auto; padding: 10px 20px; }
+        .btn-secondary:hover {
+            background: #3b82f6;
+            color: white;
+        }
         
-        /* Progress Bar Styles */
-        .analysis-progress {
-            display: none;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            margin-top: 20px;
-            grid-column: 1 / -1;
-        }
-        .progress-header {
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             text-align: center;
-            margin-bottom: 30px;
+            padding: 8rem 2rem 4rem;
+            margin-top: 80px;
         }
-        .progress-container {
-            background: #f3f4f6;
-            border-radius: 10px;
-            height: 12px;
-            overflow: hidden;
-            margin: 20px 0;
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
         }
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-            width: 0%;
-            transition: width 0.3s ease;
-            border-radius: 10px;
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .progress-steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
+        .hero-features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
         }
-        .progress-step {
+        .hero-feature {
             display: flex;
             align-items: center;
-            padding: 15px;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+        }
+        .cta-section {
+            margin-top: 3rem;
+        }
+        .cta-section .btn {
+            font-size: 1.1rem;
+            padding: 1rem 2rem;
+            margin: 0 0.5rem;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 4rem 2rem;
+            background: #f8fafc;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #1f2937;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        
+        /* Demo Section */
+        .demo {
+            padding: 4rem 2rem;
+            background: white;
+        }
+        .demo h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        .demo-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 3rem;
+        }
+        .demo-container {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 900px;
+        }
+        .contract-demo {
+            background: white;
             border-radius: 8px;
-            transition: all 0.3s ease;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .progress-step.active {
-            background: #eff6ff;
-            border: 1px solid #3b82f6;
+        .contract-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
         }
-        .progress-step.completed {
-            background: #f0fdf4;
-            border: 1px solid #22c55e;
+        .contract-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1f2937;
         }
-        .step-icon {
-            width: 32px;
-            height: 32px;
+        .risk-badges {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .risk-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .risk-high { background: #fee2e2; color: #dc2626; }
+        .risk-medium { background: #fef3c7; color: #d97706; }
+        .risk-low { background: #dbeafe; color: #2563eb; }
+        
+        .contract-text {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #374151;
+        }
+        .highlighted {
+            padding: 2px 4px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .highlighted.high { background: #fee2e2; }
+        .highlighted.medium { background: #fef3c7; }
+        .highlighted.low { background: #dbeafe; }
+        
+        /* Process Section */
+        .process {
+            padding: 4rem 2rem;
+            background: #f8fafc;
+        }
+        .process h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #1f2937;
+        }
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .process-step {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: #3b82f6;
+            color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 12px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+        }
+        
+        /* Pricing Section */
+        .pricing {
+            padding: 4rem 2rem;
+            background: white;
+            text-align: center;
+        }
+        .pricing h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        .pricing-subtitle {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 3rem;
+        }
+        .pricing-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .price {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .price-period {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        .pricing-features {
+            list-style: none;
+            margin: 2rem 0;
+        }
+        .pricing-features li {
+            padding: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+        .pricing-features li:before {
+            content: "✓";
+            margin-right: 0.75rem;
             font-weight: bold;
         }
-        .step-icon.pending { background: #f3f4f6; color: #6b7280; }
-        .step-icon.active { background: #3b82f6; color: white; }
-        .step-icon.completed { background: #22c55e; color: white; }
         
-        /* Contract Display Styles */
-        .contract-display {
-            display: none;
-            grid-column: 1 / -1;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            overflow: hidden;
+        /* CTA Section */
+        .final-cta {
+            padding: 4rem 2rem;
+            background: #1f2937;
+            color: white;
+            text-align: center;
         }
-        .contract-header {
-            background: #f8fafc;
-            padding: 20px;
-            border-bottom: 1px solid #e5e7eb;
+        .final-cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .final-cta p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .cta-buttons {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
         }
-        .contract-content {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            height: 600px;
-        }
-        .contract-text {
-            padding: 30px;
-            overflow-y: auto;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #374151;
-        }
-        .margin-notes {
-            background: #fefce8;
-            border-left: 3px solid #eab308;
-            padding: 20px;
-            overflow-y: auto;
-            font-size: 13px;
-        }
-        .highlighted {
-            background: #fef3c7;
-            padding: 2px 4px;
-            border-radius: 3px;
-            position: relative;
-            cursor: pointer;
-        }
-        .highlighted.high-risk {
-            background: #fee2e2;
-            border-left: 3px solid #ef4444;
-        }
-        .highlighted.medium-risk {
-            background: #fef3c7;
-            border-left: 3px solid #f59e0b;
-        }
-        .highlighted.low-risk {
-            background: #dbeafe;
-            border-left: 3px solid #3b82f6;
-        }
-        .note-item {
-            margin-bottom: 15px;
-            padding: 12px;
+        .btn-white {
             background: white;
-            border-radius: 6px;
-            border-left: 4px solid #eab308;
+            color: #1f2937;
         }
-        .note-item.high-risk { border-left-color: #ef4444; }
-        .note-item.medium-risk { border-left-color: #f59e0b; }
-        .note-item.low-risk { border-left-color: #3b82f6; }
+        .btn-white:hover {
+            background: #f3f4f6;
+        }
         
-        h1 { color: #1f2937; margin: 0; }
-        h2 { color: #1f2937; margin-bottom: 15px; }
-        h3 { color: #374151; margin: 10px 0; }
-        p { color: #6b7280; line-height: 1.6; }
-        .file-icon { font-size: 48px; margin-bottom: 10px; }
-        
-        .analysis-complete {
-            display: none;
-            background: #f0fdf4;
-            border: 2px solid #22c55e;
-            padding: 25px;
-            border-radius: 12px;
-            margin-top: 20px;
+        /* Footer */
+        .footer {
+            background: #111827;
+            color: white;
+            padding: 2rem;
             text-align: center;
         }
         
-        .download-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .download-btn {
-            background: #22c55e;
-            color: white;
-            padding: 15px 25px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .download-btn:hover {
-            background: #16a34a;
-            transform: translateY(-1px);
-        }
-        .secondary-btn {
-            background: #6b7280;
-        }
-        .secondary-btn:hover {
-            background: #4b5563;
-        }
-        
-        .error-display {
-            background: #fef2f2;
-            border: 2px solid #ef4444;
-            color: #dc2626;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero-features { flex-direction: column; }
+            .nav { flex-direction: column; gap: 1rem; }
+            .cta-buttons { flex-direction: column; align-items: center; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div>
-                <h1>Contract Navigator Dashboard</h1>
-                <p style="margin: 5px 0 0 0;">🤖 AI-powered professional contract analysis</p>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">Contract Navigator</div>
+            <div class="nav-buttons">
+                <a href="dashboard.html" class="btn btn-secondary">Sign In</a>
+                <a href="dashboard.html" class="btn btn-primary">Get Started</a>
             </div>
-            <button class="btn btn-danger" onclick="signOut()">Sign Out</button>
-        </div>
+        </nav>
+    </header>
 
-        <!-- Upload Section -->
-        <div class="card upload-section">
-            <h2>📄 Upload Contract for Claude AI Analysis</h2>
-            <p>Upload your contract and Claude AI will provide professional analysis with highlighted risks and detailed margin notes.</p>
-            
-            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('contractFile').click()">
-                <div class="file-icon">🤖</div>
-                <h3>Drop your contract here for AI analysis</h3>
-                <p>or click to browse files</p>
-                <p style="font-size: 14px; color: #9ca3af; margin-top: 8px;">
-                    Supported: PDF, DOC, DOCX • Maximum 10MB
-                </p>
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>AI-Powered Business Contract Analysis</h1>
+        <p>Get comprehensive contract analysis with professional annotated PDFs, highlighting risk areas with margin notes and actionable recommendations.</p>
+        
+        <div class="hero-features">
+            <div class="hero-feature">
+                <span>✓</span>
+                <span>Annotated PDFs</span>
             </div>
-            
-            <input type="file" id="contractFile" accept=".pdf,.doc,.docx" style="display: none;" onchange="handleFileUpload(event)">
-            
-            <div style="background: #f0fdf4; border: 1px solid #22c55e; padding: 15px; border-radius: 8px; margin: 15px 0;">
-                <p style="color: #059669; font-weight: 600; margin: 0;">✅ Unlimited Claude AI analyses included in your $49/month subscription</p>
+            <div class="hero-feature">
+                <span>✓</span>
+                <span>Professional reports</span>
             </div>
-            
-            <button class="btn" id="uploadBtn" onclick="document.getElementById('contractFile').click()">
-                🤖 Upload Contract for Claude AI Analysis
-            </button>
-            
-            <div id="uploadStatus"></div>
+            <div class="hero-feature">
+                <span>✓</span>
+                <span>Cancel anytime</span>
+            </div>
         </div>
+        
+        <div class="cta-section">
+            <a href="dashboard.html" class="btn btn-primary">Start Analysis</a>
+            <a href="#demo" class="btn btn-secondary">See Demo</a>
+        </div>
+    </section>
 
-        <!-- Progress Section -->
-        <div class="analysis-progress" id="analysisProgress">
-            <div class="progress-header">
-                <h2>🤖 Claude AI Analysis in Progress</h2>
-                <p style="color: #6b7280;">Your contract is being analyzed by Claude AI...</p>
-                <div class="progress-container">
-                    <div class="progress-bar" id="progressBar"></div>
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2>The only platform that delivers professional annotated contracts</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📄</div>
+                    <h3>Professional Highlighting</h3>
+                    <p>Professional highlighted contracts with color-coded risk areas and detailed margin notes.</p>
                 </div>
-                <div id="progressText">0% Complete</div>
-            </div>
-            
-            <div class="progress-steps">
-                <div class="progress-step" id="step1">
-                    <div class="step-icon pending">1</div>
-                    <div>
-                        <h4>Document Processing</h4>
-                        <p style="font-size: 13px; color: #6b7280;">Uploading and parsing...</p>
-                    </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Comprehensive Reports</h3>
+                    <p>Comprehensive analysis reports with executive summaries, risk assessments, and action checklists.</p>
                 </div>
-                <div class="progress-step" id="step2">
-                    <div class="step-icon pending">2</div>
-                    <div>
-                        <h4>🤖 Claude AI Analysis</h4>
-                        <p style="font-size: 13px; color: #6b7280;">Claude reviewing contract...</p>
-                    </div>
-                </div>
-                <div class="progress-step" id="step3">
-                    <div class="step-icon pending">3</div>
-                    <div>
-                        <h4>Risk Assessment</h4>
-                        <p style="font-size: 13px; color: #6b7280;">AI categorizing risks...</p>
-                    </div>
-                </div>
-                <div class="progress-step" id="step4">
-                    <div class="step-icon pending">4</div>
-                    <div>
-                        <h4>Report Generation</h4>
-                        <p style="font-size: 13px; color: #6b7280;">Creating annotations...</p>
-                    </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚖️</div>
+                    <h3>Risk Analysis</h3>
+                    <p>Contract-specific compliance requirements and action items generated from actual contract analysis.</p>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Contract Display -->
-        <div class="contract-display" id="contractDisplay">
-            <div class="contract-header">
-                <div>
-                    <h3 id="contractTitle">Claude AI Analysis Complete</h3>
-                    <p style="color: #6b7280;" id="contractSubtitle">AI-powered risk analysis</p>
-                </div>
-                <div id="riskSummary">
-                    <!-- Risk badges will be populated here -->
-                </div>
-            </div>
+    <!-- Demo Section -->
+    <section class="demo" id="demo">
+        <div class="container">
+            <h2>Watch how Contract Navigator analyzes contracts</h2>
+            <p class="demo-subtitle">See professional highlighting and risk analysis in action</p>
             
-            <div class="contract-content">
-                <div class="contract-text" id="contractText">
-                    <!-- Contract content will be populated here -->
-                </div>
-                
-                <div class="margin-notes">
-                    <h4 style="color: #92400e; margin-bottom: 15px;">🤖 Claude AI Risk Analysis</h4>
-                    <div id="marginNotes">
-                        <!-- Margin notes will be populated here -->
+            <div class="demo-container">
+                <div class="contract-demo">
+                    <div class="contract-header">
+                        <div>
+                            <div class="contract-title">Professional Services Agreement</div>
+                            <p>TechCorp Solutions LLC & Global Industries Inc. • $125,000 over 6 months</p>
+                        </div>
+                        <div class="risk-badges">
+                            <span class="risk-badge risk-high">3 High Risk</span>
+                            <span class="risk-badge risk-medium">5 Medium Risk</span>
+                            <span class="risk-badge risk-low">2 Low Risk</span>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>3. COMPENSATION AND PAYMENT TERMS.</strong> In consideration for the Services, Client agrees to pay Contractor a total fee of $125,000 payable in monthly installments of $20,833. <span class="highlighted high">Payment shall be due ninety (90) days after receipt of invoice ("Net 90"). Late payments shall not accrue interest or penalties.</span></p>
+                        
+                        <p><strong>5. TERM AND TERMINATION.</strong> This Agreement shall commence on the Effective Date and continue for six (6) months unless terminated earlier. Either party may terminate for material breach with thirty (30) days written notice. <span class="highlighted high">Client may not terminate this Agreement for convenience.</span></p>
+                        
+                        <p><strong>6. INDEMNIFICATION.</strong> <span class="highlighted medium">Contractor agrees to indemnify, defend, and hold harmless Client from any and all claims, damages, losses, costs, and expenses (including attorney's fees) arising out of or relating to Contractor's performance of this Agreement, regardless of the cause of such claims or whether caused by Contractor's negligence.</span></p>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Analysis Complete -->
-        <div class="analysis-complete" id="analysisComplete">
-            <h2>🎉 Claude AI Analysis Complete!</h2>
-            <p style="color: #059669; font-size: 16px; margin: 15px 0;">Your professional contract analysis is ready with Claude AI-powered insights and recommendations.</p>
-            
-            <div class="download-section">
-                <button class="download-btn" onclick="downloadPDF()">
-                    📄 Download Annotated PDF
-                </button>
-                <button class="download-btn secondary-btn" onclick="downloadReport()">
-                    📊 Download Full Report
-                </button>
+    <!-- Process Section -->
+    <section class="process">
+        <div class="container">
+            <h2>From contract upload to professional annotated PDF in minutes</h2>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <h3>Upload</h3>
+                    <p>Upload your contract and our AI performs comprehensive analysis, identifying risks and opportunities.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <h3>Analyze</h3>
+                    <p>Get your original contract with color-coded highlighting and detailed margin notes for every risk area.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <h3>Download</h3>
+                    <p>Download annotated PDFs and comprehensive reports with specific action items and compliance checklists.</p>
+                </div>
             </div>
-            
-            <p style="font-size: 14px; color: #6b7280; margin-top: 15px;">
-                Results have also been sent to your email address
-            </p>
         </div>
+    </section>
 
-        <!-- Error Display -->
-        <div class="error-display" id="errorDisplay" style="display: none;">
-            <h3>❌ Analysis Failed</h3>
-            <p id="errorMessage"></p>
-            <button class="btn" onclick="location.reload()" style="width: auto; margin-top: 15px;">Try Again</button>
+    <!-- Pricing Section -->
+    <section class="pricing">
+        <div class="container">
+            <h2>Complete analysis with annotated PDFs and professional reports</h2>
+            <p class="pricing-subtitle">No setup fees • Professional annotations included • Cancel anytime</p>
+            
+            <div class="pricing-card">
+                <div class="price">$49</div>
+                <div class="price-period">per month</div>
+                <ul class="pricing-features">
+                    <li>Unlimited contract analyses</li>
+                    <li>Professional annotated PDFs</li>
+                    <li>Comprehensive risk reports</li>
+                    <li>Team collaboration (up to 5 members)</li>
+                    <li>Email notifications</li>
+                    <li>Priority support</li>
+                </ul>
+                <a href="dashboard.html" class="btn btn-white">Start Free Trial</a>
+            </div>
         </div>
-    </div>
+    </section>
 
-    <script>
-        console.log('🤖 Contract Navigator Dashboard - Claude AI Integration Active');
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <h2>Ready to transform your contract analysis?</h2>
+        <p>Join thousands of businesses using Contract Navigator for professional contract analysis</p>
+        <div class="cta-buttons">
+            <a href="dashboard.html" class="btn btn-primary">Get Started Today</a>
+            <a href="dashboard.html" class="btn btn-white">Sign In</a>
+        </div>
+    </section>
 
-        // API Configuration - WILL BE UPDATED FOR PRODUCTION
-        let API_BASE_URL = 'http://localhost:3001/api'; 
-        
-        // Try to detect if we're on Netlify or need different URL
-        if (window.location.hostname !== 'localhost') {
-            // For now, still point to localhost - user will need to deploy backend
-            // Later this will be: API_BASE_URL = 'https://your-backend-url.com/api';
-            console.log('⚠️ Running on production site - backend needs to be deployed');
-        }
-        
-        let currentAnalysisId = null;
-        let currentAnalysisData = null;
-
-        // Drag and drop functionality
-        const uploadZone = document.getElementById('uploadZone');
-        
-        uploadZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadZone.classList.add('dragover');
-        });
-        
-        uploadZone.addEventListener('dragleave', () => {
-            uploadZone.classList.remove('dragover');
-        });
-        
-        uploadZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadZone.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFile(files[0]);
-            }
-        });
-
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                handleFile(file);
-            }
-        }
-        
-        async function handleFile(file) {
-            console.log('📄 File selected for Claude AI analysis:', file.name);
-            
-            // Validate file
-            if (file.size > 10 * 1024 * 1024) {
-                showError('File too large. Maximum size is 10MB.');
-                return;
-            }
-            
-            const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-            if (!allowedTypes.includes(file.type)) {
-                showError('Invalid file type. Please upload PDF, DOC, or DOCX files only.');
-                return;
-            }
-            
-            // Check if backend is available
-            try {
-                const healthCheck = await fetch(`${API_BASE_URL}/health`);
-                if (!healthCheck.ok) {
-                    throw new Error('Backend not available');
-                }
-            } catch (error) {
-                showError('⚠️ Backend server not running. Please start your backend server first.\n\nTo start backend:\n1. Open terminal\n2. Navigate to your backend folder\n3. Run: npm start');
-                return;
-            }
-            
-            // Start real AI analysis
-            await startRealAnalysis(file);
-        }
-        
-        async function startRealAnalysis(file) {
-            try {
-                console.log('🤖 Starting real Claude AI analysis for:', file.name);
-                
-                // Disable upload button
-                const uploadBtn = document.getElementById('uploadBtn');
-                uploadBtn.disabled = true;
-                uploadBtn.textContent = '🤖 Analyzing with Claude AI...';
-                
-                // Hide upload section and show progress
-                document.querySelector('.upload-section').style.display = 'none';
-                document.getElementById('analysisProgress').style.display = 'block';
-                
-                // STEP 1: Upload file
-                setActiveStep('step1');
-                updateStepText('step1', 'Uploading document to server...');
-                updateProgress(10);
-                
-                const formData = new FormData();
-                formData.append('contract', file);
-                
-                const uploadResponse = await fetch(`${API_BASE_URL}/upload-contract`, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (!uploadResponse.ok) {
-                    const errorData = await uploadResponse.json();
-                    throw new Error(`Upload failed: ${errorData.error || uploadResponse.status}`);
-                }
-                
-                const uploadResult = await uploadResponse.json();
-                currentAnalysisId = uploadResult.analysisId;
-                
-                updateProgress(25);
-                updateStep('step1', 'completed');
-                
-                // STEP 2: Start Claude AI Analysis
-                setActiveStep('step2');
-                updateStepText('step2', '🤖 Sending to Claude AI for analysis...');
-                updateProgress(30);
-                
-                const analysisResponse = await fetch(`${API_BASE_URL}/analyze-contract/${currentAnalysisId}`, {
-                    method: 'POST'
-                });
-                
-                if (!analysisResponse.ok) {
-                    const errorData = await analysisResponse.json();
-                    throw new Error(`Claude AI analysis failed: ${errorData.error || analysisResponse.status}`);
-                }
-                
-                updateProgress(60
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Contract Navigator. All rights reserved.</p>
+    </footer>
+</body>
+</html>
