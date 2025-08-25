@@ -3,672 +3,530 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Navigator - AI-Powered Contract Analysis</title>
+    <title>Contract Navigator - AI-Powered Business Contract Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-            line-height: 1.6;
-            color: #333;
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        
-        /* Header */
-        .header {
-            background: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-        }
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #3b82f6;
-        }
-        .nav-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
+        .card-hover {
             transition: all 0.3s ease;
         }
-        .btn-primary {
-            background: #3b82f6;
-            color: white;
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-        .btn-primary:hover {
-            background: #2563eb;
-            transform: translateY(-1px);
-        }
-        .btn-secondary {
-            background: transparent;
-            color: #3b82f6;
-            border: 2px solid #3b82f6;
-        }
-        .btn-secondary:hover {
-            background: #3b82f6;
-            color: white;
-        }
-        
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-align: center;
-            padding: 8rem 2rem 4rem;
-            margin-top: 80px;
-        }
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            font-weight: bold;
-        }
-        .hero p {
-            font-size: 1.25rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .hero-features {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin: 2rem 0;
-            flex-wrap: wrap;
-        }
-        .hero-feature {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.1rem;
-        }
-        .cta-section {
-            margin-top: 3rem;
-        }
-        .cta-section .btn {
-            font-size: 1.1rem;
-            padding: 1rem 2rem;
-            margin: 0 0.5rem;
-        }
-        
-        /* Interactive Demo Section */
-        .demo {
-            padding: 4rem 2rem;
-            background: white;
-        }
-        .demo h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #1f2937;
-        }
-        .demo-subtitle {
-            text-align: center;
-            font-size: 1.2rem;
-            color: #6b7280;
-            margin-bottom: 3rem;
-        }
-        
-        /* Interactive Contract Demo */
-        .contract-demo-container {
-            max-width: 1000px;
-            margin: 0 auto;
+        .demo-container {
             background: #f8fafc;
             border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            padding: 24px;
+            margin: 24px 0;
         }
-        .contract-header {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .progress-bar {
+            width: 0%;
+            transition: width 0.8s ease-in-out;
         }
-        .contract-info h3 {
-            font-size: 1.25rem;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
+        .analysis-result {
+            display: none;
         }
-        .contract-meta {
-            color: #6b7280;
-            font-size: 0.9rem;
-        }
-        .risk-summary {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        .risk-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .risk-high { background: #fee2e2; color: #dc2626; }
-        .risk-medium { background: #fef3c7; color: #d97706; }
-        .risk-low { background: #dbeafe; color: #2563eb; }
-        
-        .contract-content {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 1.5rem;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
         .contract-text {
-            padding: 2rem;
-            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
             line-height: 1.6;
-            color: #374151;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-        
-        .margin-notes {
-            background: #fefce8;
-            border-left: 3px solid #eab308;
-            padding: 1.5rem;
-            overflow-y: auto;
-            max-height: 500px;
-        }
-        .margin-notes h4 {
-            color: #92400e;
-            margin-bottom: 1rem;
-        }
-        
-        .highlighted {
-            background: #fef3c7;
-            padding: 2px 4px;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .highlighted:hover {
-            box-shadow: 0 0 0 2px #3b82f6;
-        }
-        .highlighted.high-risk {
-            background: #fee2e2;
-            border-left: 3px solid #ef4444;
-        }
-        .highlighted.medium-risk {
-            background: #fef3c7;
-            border-left: 3px solid #f59e0b;
-        }
-        .highlighted.low-risk {
-            background: #dbeafe;
-            border-left: 3px solid #3b82f6;
-        }
-        
-        .note-item {
-            margin-bottom: 1rem;
-            padding: 1rem;
             background: white;
-            border-radius: 6px;
-            border-left: 4px solid #eab308;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
         }
-        .note-item:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        .highlight-administrative { background-color: #dbeafe; border-left: 4px solid #3b82f6; }ft: 4px solid #3b82f6; }
+        .highlight-financial { background-color: #dcfce7; border-left: 4px solid #10b981; }
+        .highlight-performance { background-color: #fef3c7; border-left: 4px solid #f59e0b; }
+        .highlight-legal { background-color: #fee2e2; border-left: 4px solid #ef4444; }
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
         }
-        .note-item.high-risk { border-left-color: #ef4444; }
-        .note-item.medium-risk { border-left-color: #f59e0b; }
-        .note-item.low-risk { border-left-color: #3b82f6; }
-        .note-item strong {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-        
-        /* Features Section */
-        .features {
-            padding: 4rem 2rem;
-            background: #f8fafc;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .features h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: #1f2937;
-        }
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        .feature-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: #1f2937;
-        }
-        
-        /* Pricing Section */
-        .pricing {
-            padding: 4rem 2rem;
-            background: white;
-            text-align: center;
-        }
-        .pricing h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #1f2937;
-        }
-        .pricing-subtitle {
-            font-size: 1.2rem;
-            color: #6b7280;
-            margin-bottom: 3rem;
-        }
-        .pricing-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 3rem 2rem;
-            border-radius: 12px;
-            max-width: 500px;
-            margin: 0 auto;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        .price {
-            font-size: 3rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-        .price-period {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-bottom: 2rem;
-        }
-        .pricing-features {
-            list-style: none;
-            margin: 2rem 0;
-        }
-        .pricing-features li {
-            padding: 0.5rem 0;
-            font-size: 1.1rem;
-        }
-        .pricing-features li:before {
-            content: "✓";
-            margin-right: 0.75rem;
-            font-weight: bold;
-        }
-        
-        /* Sign In/Up Section */
-        .auth-section {
-            padding: 4rem 2rem;
-            background: #1f2937;
-            color: white;
-            text-align: center;
-        }
-        .auth-section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        .auth-section p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-        .auth-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        .btn-white {
-            background: white;
-            color: #1f2937;
-        }
-        .btn-white:hover {
-            background: #f3f4f6;
-        }
-        
-        /* Footer */
-        .footer {
-            background: #111827;
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2rem; }
-            .hero-features { flex-direction: column; }
-            .nav { flex-direction: column; gap: 1rem; }
-            .auth-buttons { flex-direction: column; align-items: center; }
-            .contract-content { grid-template-columns: 1fr; }
-            .margin-notes { max-height: 300px; }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-50">
     <!-- Header -->
-    <header class="header">
-        <nav class="nav">
-            <div class="logo">Contract Navigator</div>
-            <div class="nav-buttons">
-                <button class="btn btn-secondary" onclick="showSignIn()">Sign In</button>
-                <button class="btn btn-primary" onclick="startSignUp()">Get Started</button>
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="file-text" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="text-2xl font-bold gradient-text">Contract Navigator</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#features" class="text-gray-600 hover:text-blue-600 transition-colors">Features</a>
+                    <a href="#pricing" class="text-gray-600 hover:text-blue-600 transition-colors">Pricing</a>
+                    <a href="#demo" class="text-gray-600 hover:text-blue-600 transition-colors">Demo</a>
+                    <button id="getStartedBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        Get Started
+                    </button>
+                </div>
             </div>
         </nav>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <h1>AI-Powered Business Contract Analysis</h1>
-        <p>Get comprehensive contract analysis with professional annotated PDFs, highlighting risk areas with margin notes and actionable recommendations.</p>
-        
-        <div class="hero-features">
-            <div class="hero-feature">
-                <span>✓</span>
-                <span>Annotated PDFs</span>
-            </div>
-            <div class="hero-feature">
-                <span>✓</span>
-                <span>Professional reports</span>
-            </div>
-            <div class="hero-feature">
-                <span>✓</span>
-                <span>Cancel anytime</span>
-            </div>
-        </div>
-        
-        <div class="cta-section">
-            <button class="btn btn-primary" onclick="startSignUp()">Start Free Trial</button>
-            <a href="#demo" class="btn btn-secondary">See Demo</a>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
-        <div class="container">
-            <h2>The only platform that delivers professional annotated contracts</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">📄</div>
-                    <h3>Professional Highlighting</h3>
-                    <p>Color-coded highlighting shows exactly where risks are located in your contract with detailed margin notes.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Comprehensive Reports</h3>
-                    <p>Complete analysis with action items and compliance checklist generated from actual contract analysis.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚖️</div>
-                    <h3>Risk Analysis</h3>
-                    <p>Contract-specific compliance requirements and actionable recommendations from AI analysis.</p>
-                </div>
+    <section class="gradient-bg text-white py-20">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-5xl font-bold mb-6">
+                The Only 4-Point<br>
+                <span class="text-yellow-300">Contract Intelligence</span><br>
+                Platform
+            </h1>
+            <p class="text-xl mb-8 max-w-3xl mx-auto opacity-90">
+                Professional AI contract analysis providing comprehensive business intelligence - Administrative, Financial, Performance, and Legal insights in minutes.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="heroGetStartedBtn" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                    Get Started - $49/month
+                </button>
+                <button id="tryDemoBtn" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                    Try Interactive Demo
+                </button>
             </div>
         </div>
     </section>
 
     <!-- Interactive Demo Section -->
-    <section class="demo" id="demo">
-        <div class="container">
-            <h2>Watch how Contract Navigator analyzes and annotates a real consulting contract</h2>
-            <p class="demo-subtitle">Professional highlighting with color-coded risk areas and detailed margin notes</p>
+    <section id="demo" class="py-16">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">See Contract Navigator in Action</h2>
+                <p class="text-xl text-gray-600">Upload a contract and watch our AI provide comprehensive business intelligence</p>
+            </div>
             
-            <div class="contract-demo-container">
-                <div class="contract-header">
-                    <div class="contract-info">
-                        <h3>Professional Services Agreement</h3>
-                        <div class="contract-meta">Between TechCorp Solutions LLC and Global Industries Inc.</div>
+            <div class="max-w-4xl mx-auto">
+                <div class="demo-container">
+                    <div id="demoUpload" class="text-center">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-12 hover:border-blue-400 transition-colors cursor-pointer">
+                            <i data-lucide="upload" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
+                            <h3 class="text-lg font-semibold mb-2">Upload Your Contract</h3>
+                            <p class="text-gray-600 mb-4">Drop a contract file here or click to browse</p>
+                            <button id="startDemoBtn" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                                Start Demo Analysis
+                            </button>
+                        </div>
                     </div>
-                    <div class="risk-summary">
-                        <span class="risk-badge risk-high">3 High Risk</span>
-                        <span class="risk-badge risk-medium">5 Medium Risk</span>
-                        <span class="risk-badge risk-low">2 Low Risk</span>
+
+                    <div id="demoAnalysis" class="hidden">
+                        <h3 class="text-xl font-bold mb-6">Analyzing: Software License Agreement</h3>
+                        
+                        <!-- Progress Steps -->
+                        <div class="space-y-4 mb-8">
+                            <div class="flex items-center">
+                                <div class="spinner" id="spinner1"></div>
+                                <span class="text-gray-700" id="step1">Reading contract content...</span>
+                                <i data-lucide="check" class="w-5 h-5 text-green-600 ml-auto hidden" id="check1"></i>
+                            </div>
+                            <div class="bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full progress-bar" id="progress1"></div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="spinner hidden" id="spinner2"></div>
+                                <span class="text-gray-400" id="step2">Analyzing terms and conditions...</span>
+                                <i data-lucide="check" class="w-5 h-5 text-green-600 ml-auto hidden" id="check2"></i>
+                            </div>
+                            <div class="bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full progress-bar" id="progress2"></div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="spinner hidden" id="spinner3"></div>
+                                <span class="text-gray-400" id="step3">Generating risk assessment...</span>
+                                <i data-lucide="check" class="w-5 h-5 text-green-600 ml-auto hidden" id="check3"></i>
+                            </div>
+                            <div class="bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full progress-bar" id="progress3"></div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="spinner hidden" id="spinner4"></div>
+                                <span class="text-gray-400" id="step4">Compiling business intelligence...</span>
+                                <i data-lucide="check" class="w-5 h-5 text-green-600 ml-auto hidden" id="check4"></i>
+                            </div>
+                            <div class="bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full progress-bar" id="progress4"></div>
+                            </div>
+                        </div>
+
+                        <div id="analysisComplete" class="hidden text-center py-4">
+                            <i data-lucide="check-circle" class="w-12 h-12 text-green-600 mx-auto mb-2"></i>
+                            <h4 class="text-xl font-bold text-green-600">Analysis Complete!</h4>
+                        </div>
+                    </div>
+
+                    <!-- Demo Results -->
+                    <div id="demoResults" class="analysis-result">
+                        <div class="bg-white rounded-lg p-6 shadow-sm">
+                            <h3 class="text-2xl font-bold mb-6 flex items-center">
+                                <i data-lucide="file-check" class="w-6 h-6 mr-2 text-blue-600"></i>
+                                Contract Analysis Results
+                            </h3>
+                            
+                            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                                <!-- Administrative -->
+                                <div class="highlight-administrative p-4 rounded-lg">
+                                    <h4 class="font-bold text-blue-800 mb-2 flex items-center">
+                                        <i data-lucide="settings" class="w-5 h-5 mr-2"></i>
+                                        Administrative Analysis
+                                    </h4>
+                                    <p class="text-sm text-blue-700 mb-2"><strong>Risk Level:</strong> Low</p>
+                                    <p class="text-sm text-blue-700">Standard license terms with clear usage rights. Renewal process is straightforward with 30-day notice period.</p>
+                                </div>
+
+                                <!-- Financial -->
+                                <div class="highlight-financial p-4 rounded-lg">
+                                    <h4 class="font-bold text-green-800 mb-2 flex items-center">
+                                        <i data-lucide="dollar-sign" class="w-5 h-5 mr-2"></i>
+                                        Financial Analysis
+                                    </h4>
+                                    <p class="text-sm text-green-700 mb-2"><strong>Risk Level:</strong> Medium</p>
+                                    <p class="text-sm text-green-700">Annual fee of $50,000 with automatic escalation clause of 3% annually. Payment terms require 30-day advance payment.</p>
+                                </div>
+
+                                <!-- Performance -->
+                                <div class="highlight-performance p-4 rounded-lg">
+                                    <h4 class="font-bold text-yellow-800 mb-2 flex items-center">
+                                        <i data-lucide="trending-up" class="w-5 h-5 mr-2"></i>
+                                        Performance Analysis
+                                    </h4>
+                                    <p class="text-sm text-yellow-700 mb-2"><strong>Risk Level:</strong> Low</p>
+                                    <p class="text-sm text-yellow-700">99.5% uptime guarantee with service level credits. Support response time guaranteed within 4 hours for critical issues.</p>
+                                </div>
+
+                                <!-- Legal -->
+                                <div class="highlight-legal p-4 rounded-lg">
+                                    <h4 class="font-bold text-red-800 mb-2 flex items-center">
+                                        <i data-lucide="scale" class="w-5 h-5 mr-2"></i>
+                                        Legal Analysis
+                                    </h4>
+                                    <p class="text-sm text-red-700 mb-2"><strong>Risk Level:</strong> High</p>
+                                    <p class="text-sm text-red-700">Broad indemnification clause favoring vendor. Limited liability cap may not cover potential damages. Dispute resolution requires binding arbitration.</p>
+                                </div>
+                            </div>
+
+                            <!-- Strategic Recommendations -->
+                            <div class="bg-gray-50 p-6 rounded-lg">
+                                <h4 class="text-lg font-bold mb-4 flex items-center">
+                                    <i data-lucide="lightbulb" class="w-5 h-5 mr-2 text-orange-500"></i>
+                                    Strategic Recommendations
+                                </h4>
+                                <ul class="space-y-2">
+                                    <li class="flex items-start">
+                                        <span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded mr-3 mt-0.5">HIGH</span>
+                                        <span class="text-sm">Negotiate mutual indemnification clause to balance legal risk exposure</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded mr-3 mt-0.5">MED</span>
+                                        <span class="text-sm">Consider capping automatic price escalation at 2% annually or CPI, whichever is lower</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded mr-3 mt-0.5">LOW</span>
+                                        <span class="text-sm">Ensure data backup and recovery procedures are clearly defined in service terms</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="text-center mt-8">
+                                <button id="getFullAnalysisBtn" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                                    Get Full Analysis for $49/month
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">Complete Business Intelligence</h2>
+                <p class="text-xl text-gray-600">Get comprehensive contract analysis across all business dimensions</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="card-hover bg-white p-6 rounded-xl shadow-sm border">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="settings" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Administrative</h3>
+                    <p class="text-gray-600">Timeline analysis, renewal dates, notification requirements, and process workflows</p>
+                </div>
                 
-                <div class="contract-content">
-                    <div class="contract-text">
-                        <h4>PROFESSIONAL SERVICES AGREEMENT</h4>
-                        <p><strong>Between TechCorp Solutions LLC and Global Industries Inc.</strong></p>
-                        <br>
-                        
-                        <p><strong>1. PARTIES AND EFFECTIVE DATE.</strong> This Professional Services Agreement ("Agreement") is entered into as of January 15, 2025 by and between TechCorp Solutions LLC, a Delaware limited liability company ("Contractor"), and Global Industries Inc., a California corporation ("Client").</p>
-                        <br>
-                        
-                        <p><strong>2. SCOPE OF SERVICES.</strong> Contractor shall provide digital transformation consulting services including system integration, process optimization, and technology advisory services as detailed in Exhibit A attached hereto and incorporated by reference.</p>
-                        <br>
-                        
-                        <p><strong>3. COMPENSATION AND PAYMENT TERMS.</strong> In consideration for the Services, Client agrees to pay Contractor a total fee of $125,000 payable in monthly installments of $20,833. <span class="highlighted high-risk" data-note="1">Payment shall be due ninety (90) days after receipt of invoice ("Net 90"). Late payments shall not accrue interest or penalties.</span></p>
-                        <br>
-                        
-                        <p><strong>4. PERFORMANCE REQUIREMENTS.</strong> <span class="highlighted medium-risk" data-note="2">Contractor shall maintain dedicated on-site presence during Client's business hours (8 AM - 6 PM, Monday-Friday) and provide 24/7 emergency support response within 2 hours for critical system issues.</span></p>
-                        <br>
-                        
-                        <p><strong>5. TERM AND TERMINATION.</strong> This Agreement shall commence on the Effective Date and continue for six (6) months unless terminated earlier. Either party may terminate for material breach with thirty (30) days written notice. <span class="highlighted high-risk" data-note="3">Client may not terminate this Agreement for convenience.</span></p>
-                        <br>
-                        
-                        <p><strong>6. INDEMNIFICATION.</strong> <span class="highlighted high-risk" data-note="4">Contractor agrees to indemnify, defend, and hold harmless Client from any and all claims, damages, losses, costs, and expenses (including attorney's fees) arising out of or relating to Contractor's performance of this Agreement, regardless of the cause of such claims or whether caused by Contractor's negligence.</span></p>
-                        <br>
-                        
-                        <p><strong>7. INSURANCE.</strong> <span class="highlighted medium-risk" data-note="5">Contractor shall maintain Commercial General Liability insurance of not less than $2,000,000 per occurrence, Professional Liability insurance of $1,000,000 per claim, and Cyber Liability insurance of $5,000,000 per incident.</span></p>
-                        <br>
-                        
-                        <p><strong>8. INTELLECTUAL PROPERTY.</strong> <span class="highlighted medium-risk" data-note="6">All work product, deliverables, and intellectual property created by Contractor in performance of this Agreement shall remain the property of Contractor, with Client receiving a non-exclusive, royalty-free license for business use.</span></p>
+                <div class="card-hover bg-white p-6 rounded-xl shadow-sm border">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="dollar-sign" class="w-6 h-6 text-green-600"></i>
                     </div>
-                    
-                    <div class="margin-notes">
-                        <h4>📝 Risk Analysis & Notes</h4>
-                        
-                        <div class="note-item high-risk" id="note1">
-                            <strong>🚨 HIGH RISK: Extended Payment Terms</strong>
-                            <p>90-day payment terms create significant cash flow risk. Industry standard is Net 30. Recommend negotiating shorter terms and adding late payment penalties.</p>
-                        </div>
-                        
-                        <div class="note-item medium-risk" id="note2">
-                            <strong>⚠️ MEDIUM RISK: Demanding Performance Requirements</strong>
-                            <p>On-site presence and 24/7 support requirements are extensive. Ensure adequate staffing and consider additional compensation for emergency support.</p>
-                        </div>
-                        
-                        <div class="note-item high-risk" id="note3">
-                            <strong>🚨 HIGH RISK: No Termination for Convenience</strong>
-                            <p>Client cannot terminate without cause, but contractor's termination rights aren't specified. This creates legal risk. Add mutual termination provisions.</p>
-                        </div>
-                        
-                        <div class="note-item high-risk" id="note4">
-                            <strong>🚨 HIGH RISK: Broad Indemnification</strong>
-                            <p>Unlimited indemnification "regardless of cause" is extremely risky. Limit indemnification to contractor's willful misconduct or negligence only.</p>
-                        </div>
-                        
-                        <div class="note-item medium-risk" id="note5">
-                            <strong>⚠️ MEDIUM RISK: High Insurance Requirements</strong>
-                            <p>$5M cyber liability insurance is substantial. Verify current coverage levels and budget for increased premiums if needed.</p>
-                        </div>
-                        
-                        <div class="note-item medium-risk" id="note6">
-                            <strong>⚠️ MEDIUM RISK: IP Ownership</strong>
-                            <p>Contractor retains all IP rights. Consider if client should own work product developed specifically for their business needs.</p>
-                        </div>
+                    <h3 class="text-xl font-bold mb-3">Financial</h3>
+                    <p class="text-gray-600">Cost analysis, payment terms, penalties, escalation clauses, and budget impact</p>
+                </div>
+                
+                <div class="card-hover bg-white p-6 rounded-xl shadow-sm border">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="trending-up" class="w-6 h-6 text-orange-600"></i>
                     </div>
+                    <h3 class="text-xl font-bold mb-3">Performance</h3>
+                    <p class="text-gray-600">SLA tracking, deliverables, milestones, quality metrics, and success criteria</p>
+                </div>
+                
+                <div class="card-hover bg-white p-6 rounded-xl shadow-sm border">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="scale" class="w-6 h-6 text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Legal</h3>
+                    <p class="text-gray-600">Risk assessment, liability exposure, compliance requirements, and legal obligations</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Pricing Section -->
-    <section class="pricing">
-        <div class="container">
-            <h2>Get unlimited access to Contract Navigator's analysis</h2>
-            <p class="pricing-subtitle">Professional reports and annotated PDFs for just $49/month</p>
+    <section id="pricing" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-4">Simple, Professional Pricing</h2>
+            <p class="text-xl text-gray-600 mb-12">Get started with comprehensive contract analysis today</p>
             
-            <div class="pricing-card">
-                <div class="price">$49</div>
-                <div class="price-period">per month</div>
-                <ul class="pricing-features">
-                    <li>Unlimited contract analyses</li>
-                    <li>Professional annotated PDFs</li>
-                    <li>Comprehensive risk reports</li>
-                    <li>Team collaboration (up to 5 members)</li>
-                    <li>Email notifications</li>
-                    <li>Priority support</li>
-                    <li>Cancel anytime</li>
-                </ul>
-                <button class="btn btn-white" onclick="startSignUp()">Start Free Trial</button>
+            <div class="max-w-md mx-auto">
+                <div class="bg-white rounded-xl shadow-lg p-8 border-2 border-blue-500">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-4">Contract Navigator Pro</h3>
+                        <div class="mb-6">
+                            <span class="text-5xl font-bold">$49</span>
+                            <span class="text-gray-600">/month</span>
+                        </div>
+                        <ul class="text-left space-y-3 mb-8">
+                            <li class="flex items-center">
+                                <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
+                                <span>Unlimited contract analysis</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
+                                <span>4-point business intelligence</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
+                                <span>Risk assessment & recommendations</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
+                                <span>Export & share reports</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
+                                <span>Priority support</span>
+                            </li>
+                        </ul>
+                        <button id="pricingGetStartedBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                            Get Started Now
+                        </button>
+                        <p class="text-sm text-gray-500 mt-4">Cancel anytime. No contracts.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Sign In/Up Section -->
-    <section class="auth-section">
-        <h2>Ready to get started?</h2>
-        <p>Join thousands of businesses using Contract Navigator for professional contract analysis</p>
-        <div class="auth-buttons">
-            <button class="btn btn-primary" onclick="startSignUp()">Start Free Trial</button>
-            <button class="btn btn-white" onclick="showSignIn()">Already have an account?</button>
-        </div>
-    </section>
-
     <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2025 Contract Navigator. All rights reserved.</p>
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <i data-lucide="file-text" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold">Contract Navigator</span>
+                    </div>
+                    <p class="text-gray-300">Professional AI contract analysis for smarter business decisions.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#features" class="hover:text-white transition-colors">Features</a></li>
+                        <li><a href="#pricing" class="hover:text-white transition-colors">Pricing</a></li>
+                        <li><a href="#demo" class="hover:text-white transition-colors">Demo</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Support</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Data Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
+                <p>&copy; 2025 Contract Navigator. All rights reserved.</p>
+            </div>
+        </div>
     </footer>
 
     <script>
-        // Interactive demo functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('✅ Contract Navigator Homepage Loaded');
-            setupInteractiveDemo();
-        });
+        // Initialize Lucide icons
+        lucide.createIcons();
 
-        function setupInteractiveDemo() {
-            // Add click handlers for highlighted text
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('highlighted')) {
-                    const noteId = 'note' + e.target.dataset.note;
-                    const noteElement = document.getElementById(noteId);
-                    if (noteElement) {
-                        // Highlight the corresponding note
-                        document.querySelectorAll('.note-item').forEach(note => {
-                            note.style.animation = '';
-                        });
-                        
-                        noteElement.style.animation = 'pulse 1s ease-in-out';
-                        noteElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        
-                        setTimeout(() => {
-                            noteElement.style.animation = '';
-                        }, 1000);
+        // Initialize Stripe
+        const stripe = Stripe('pk_test_51RqLYw20qgAtFe5auGA9bShL12w6kIsLe6OeP1a1NfNtnTGx9kUgIL1QK9ACefetZF01pfK7LgDUJM3KW5NiTDIe00hLKBC0JV');
+
+        // Get Started button handlers
+        const getStartedButtons = document.querySelectorAll('#getStartedBtn, #heroGetStartedBtn, #pricingGetStartedBtn, #getFullAnalysisBtn');
+        
+        getStartedButtons.forEach(button => {
+            button.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/.netlify/functions/create-checkout-session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            priceId: 'price_1RyrlZQqgAtFeSaKNS2uE13'
+                        })
+                    });
+
+                    const { sessionId } = await response.json();
+                    
+                    const { error } = await stripe.redirectToCheckout({
+                        sessionId: sessionId
+                    });
+
+                    if (error) {
+                        console.error('Error redirecting to checkout:', error);
                     }
+                } catch (err) {
+                    console.error('Error creating checkout session:', err);
                 }
             });
+        });
 
-            // Add click handlers for note items
-            document.querySelectorAll('.note-item').forEach((note, index) => {
-                note.addEventListener('click', function() {
-                    const highlightedElement = document.querySelector(`[data-note="${index + 1}"]`);
-                    if (highlightedElement) {
-                        highlightedElement.style.animation = 'highlight 1s ease-in-out';
-                        highlightedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        
-                        setTimeout(() => {
-                            highlightedElement.style.animation = '';
-                        }, 1000);
+        // Demo functionality
+        const tryDemoBtn = document.getElementById('tryDemoBtn');
+        const startDemoBtn = document.getElementById('startDemoBtn');
+        const demoUpload = document.getElementById('demoUpload');
+        const demoAnalysis = document.getElementById('demoAnalysis');
+        const demoResults = document.getElementById('demoResults');
+
+        function startDemo() {
+            demoUpload.classList.add('hidden');
+            demoAnalysis.classList.remove('hidden');
+            
+            // Animate the analysis steps
+            const steps = [
+                { spinner: 'spinner1', step: 'step1', check: 'check1', progress: 'progress1', duration: 2000 },
+                { spinner: 'spinner2', step: 'step2', check: 'check2', progress: 'progress2', duration: 2500 },
+                { spinner: 'spinner3', step: 'step3', check: 'check3', progress: 'progress3', duration: 3000 },
+                { spinner: 'spinner4', step: 'step4', check: 'check4', progress: 'progress4', duration: 2000 }
+            ];
+            
+            let delay = 0;
+            steps.forEach((stepData, index) => {
+                setTimeout(() => {
+                    // Start this step
+                    if (index > 0) {
+                        // Hide previous spinner and show check
+                        const prevSpinner = document.getElementById(steps[index-1].spinner);
+                        const prevCheck = document.getElementById(steps[index-1].check);
+                        prevSpinner.style.display = 'none';
+                        prevCheck.classList.remove('hidden');
                     }
-                });
+                    
+                    // Show current step
+                    const currentSpinner = document.getElementById(stepData.spinner);
+                    const currentStep = document.getElementById(stepData.step);
+                    const currentProgress = document.getElementById(stepData.progress);
+                    
+                    currentSpinner.classList.remove('hidden');
+                    currentStep.classList.remove('text-gray-400');
+                    currentStep.classList.add('text-gray-700');
+                    
+                    // Animate progress bar
+                    setTimeout(() => {
+                        currentProgress.style.width = '100%';
+                    }, 100);
+                    
+                    // If this is the last step
+                    if (index === steps.length - 1) {
+                        setTimeout(() => {
+                            currentSpinner.style.display = 'none';
+                            const currentCheck = document.getElementById(stepData.check);
+                            currentCheck.classList.remove('hidden');
+                            
+                            // Show completion message
+                            document.getElementById('analysisComplete').classList.remove('hidden');
+                            
+                            // Show results after a delay
+                            setTimeout(() => {
+                                demoAnalysis.classList.add('hidden');
+                                demoResults.style.display = 'block';
+                                
+                                // Smooth scroll to results
+                                demoResults.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }, 1500);
+                        }, stepData.duration);
+                    }
+                }, delay);
+                
+                delay += stepData.duration;
             });
         }
 
-        // Authentication functions
-        function showSignIn() {
-            // For existing customers - direct to dashboard
-            const confirmed = confirm('Sign in to your Contract Navigator account?\n\n✅ Access your dashboard\n✅ View your contract library\n✅ Upload new contracts\n\nClick OK to continue to sign in.');
-            
-            if (confirmed) {
-                window.location.href = 'dashboard.html';
-            }
-        }
+        tryDemoBtn.addEventListener('click', () => {
+            document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
+        });
 
-        function startSignUp() {
-            // For new customers - show payment flow
-            const confirmed = confirm('Start your Contract Navigator subscription?\n\n📄 Unlimited contract analyses\n💰 $49/month (cancel anytime)\n🎯 7-day free trial\n\nClick OK to continue to payment and setup.');
-            
-            if (confirmed) {
-                // Here you would integrate with Stripe or payment processor
-                // For now, simulate the flow
-                setTimeout(() => {
-                    const paymentConfirmed = confirm('Complete your subscription setup?\n\n💳 Payment: $49/month\n📧 Email: Enter your business email\n👥 Team: Add up to 5 members\n\nClick OK to proceed to payment.');
-                    
-                    if (paymentConfirmed) {
-                        // Simulate successful payment and redirect to dashboard
-                        alert('🎉 Welcome to Contract Navigator!\n\n✅ Payment successful\n✅ Account created\n✅ Redirecting to your dashboard\n\nYou can now upload contracts for analysis!');
-                        window.location.href = 'dashboard.html';
-                    }
-                }, 1000);
-            }
-        }
+        startDemoBtn.addEventListener('click', startDemo);
 
-        // Smooth scrolling for anchor links
+        // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
                 }
             });
         });
     </script>
-
-    <style>
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-        }
-        
-        @keyframes highlight {
-            0% { background: #fef3c7; }
-            50% { background: #3b82f6; color: white; }
-            100% { background: #fef3c7; }
-        }
-    </style>
 </body>
 </html>
