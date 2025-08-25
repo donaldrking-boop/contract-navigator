@@ -1,0 +1,12 @@
+{
+  "name": "contract-navigator",
+  "version": "1.0.0",
+  "description": "AI-powered contract analysis platform",
+  "dependencies": {
+    "stripe": "^13.0.0",
+    "@supabase/supabase-js": "^2.18.0"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
