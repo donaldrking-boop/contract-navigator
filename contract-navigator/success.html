@@ -3,122 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Contract Navigator - Payment Successful</title>
+    <title>Welcome to Contract Navigator!</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">CN</span>
-                    </div>
-                    <span class="text-xl font-bold text-gray-900">Contract Navigator</span>
-                </div>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
+        <!-- Success Icon -->
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+        </div>
+
+        <!-- Welcome Message -->
+        <h1 class="text-2xl font-bold text-gray-900 mb-4">Welcome to Contract Navigator!</h1>
+        <p class="text-gray-600 mb-6">Your payment was successful and your account is being set up.</p>
+
+        <!-- Account Setup Status -->
+        <div id="setupStatus" class="mb-6">
+            <div class="flex items-center justify-center mb-4">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                <span class="ml-3 text-gray-700">Setting up your account...</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div id="progressBar" class="bg-indigo-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
             </div>
         </div>
-    </header>
 
-    <!-- Success Message -->
-    <section class="py-20">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="bg-white rounded-xl shadow-lg p-12">
-                <!-- Success Icon -->
-                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                </div>
+        <!-- Success State (Hidden Initially) -->
+        <div id="successState" class="hidden">
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <h3 class="font-semibold text-green-800 mb-2">Account Ready!</h3>
+                <p class="text-green-700 text-sm">You can now upload and analyze contracts with our AI-powered platform.</p>
+            </div>
+            
+            <button id="accessDashboard" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors mb-4">
+                Access Your Dashboard
+            </button>
+            
+            <div class="text-sm text-gray-500">
+                <p>Questions? Email us at <a href="mailto:support@contract-navigator.com" class="text-indigo-600">support@contract-navigator.com</a></p>
+            </div>
+        </div>
+    </div>
 
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    Welcome to Contract Navigator!
-                </h1>
+    <script>
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(
+            'https://ugpetfrmipzsjibhezrq.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVncGV0ZnJtaXB6c2ppYmhlenJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4Nzg5MjYsImV4cCI6MjA3MTQ1NDkyNn0._NUdCXEqf5PexE9b4ifK_ya0eQp2p3kGP5VxeQCLyYs'
+        );
+
+        // Get session ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+
+        // Simulate account setup progress
+        let progress = 0;
+        const progressBar = document.getElementById('progressBar');
+        
+        const setupInterval = setInterval(() => {
+            progress += Math.random() * 25;
+            if (progress > 100) progress = 100;
+            
+            progressBar.style.width = progress + '%';
+            
+            if (progress >= 100) {
+                clearInterval(setupInterval);
                 
-                <p class="text-xl text-gray-600 mb-8">
-                    Your payment was successful and your subscription is now active.
-                </p>
+                // Show success state
+                setTimeout(() => {
+                    document.getElementById('setupStatus').classList.add('hidden');
+                    document.getElementById('successState').classList.remove('hidden');
+                }, 1000);
+            }
+        }, 800);
 
-                <!-- Account Setup -->
-                <div class="bg-blue-50 rounded-lg p-6 mb-8">
-                    <h2 class="text-2xl font-semibold text-blue-900 mb-4">Your Account is Ready</h2>
-                    <div class="text-left space-y-3">
-                        <div class="flex items-center gap-2">
-                            <span class="text-green-500">✓</span>
-                            <span>$39/month subscription activated</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-green-500">✓</span>
-                            <span>Unlimited contract analysis</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-green-500">✓</span>
-                            <span>Professional 4-point analysis framework</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-green-500">✓</span>
-                            <span>Risk assessment and strategic recommendations</span>
-                        </div>
-                    </div>
-                </div>
+        // Access dashboard button
+        document.getElementById('accessDashboard').addEventListener('click', () => {
+            // Redirect to main site with dashboard access
+            window.location.href = '/';
+        });
 
-                <!-- Next Steps -->
-                <div class="text-left">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">What's Next?</h3>
-                    <div class="space-y-4">
-                        <div class="border rounded-lg p-4">
-                            <h4 class="font-semibold text-gray-900 mb-2">1. Check Your Email</h4>
-                            <p class="text-gray-600">We've sent you login credentials and getting started information.</p>
-                        </div>
-                        <div class="border rounded-lg p-4">
-                            <h4 class="font-semibold text-gray-900 mb-2">2. Upload Your First Contract</h4>
-                            <p class="text-gray-600">Ready to analyze? Upload any PDF, DOCX, or TXT contract file.</p>
-                        </div>
-                        <div class="border rounded-lg p-4">
-                            <h4 class="font-semibold text-gray-900 mb-2">3. Get Professional Analysis</h4>
-                            <p class="text-gray-600">Receive comprehensive insights in minutes, not days.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CTA Buttons -->
-                <div class="mt-8 space-y-4">
-                    <button onclick="window.location.href='mailto:support@contract-navigator.net'" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-colors">
-                        Start Analyzing Contracts
-                    </button>
-                    <button onclick="window.location.href='/'" class="w-full border border-gray-300 text-gray-700 hover:bg-gray-50 py-3 px-6 rounded-lg font-semibold transition-colors">
-                        Back to Homepage
-                    </button>
-                </div>
-
-                <!-- Support -->
-                <div class="mt-8 p-4 bg-gray-50 rounded-lg">
-                    <p class="text-sm text-gray-600">
-                        Need help? Contact us at 
-                        <a href="mailto:support@contract-navigator.net" class="text-blue-600 hover:text-blue-700">support@contract-navigator.net</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="flex items-center justify-center space-x-2 mb-4">
-                <div class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center">
-                    <span class="text-white font-bold text-xs">CN</span>
-                </div>
-                <span class="font-bold">Contract Navigator</span>
-            </div>
-            <p class="text-gray-400">&copy; 2024 Contract Navigator. All rights reserved.</p>
-        </div>
-    </footer>
+        // Auto-redirect after 10 seconds
+        setTimeout(() => {
+            if (!document.getElementById('successState').classList.contains('hidden')) {
+                window.location.href = '/';
+            }
+        }, 10000);
+    </script>
 </body>
 </html>
