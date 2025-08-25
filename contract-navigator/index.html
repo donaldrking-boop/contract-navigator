@@ -881,6 +881,7 @@
         </div>
     </div>
 
+    <script src="https://js.stripe.com/v3/"></script>
     <script>
         // State management
         let isSignedIn = false;
@@ -1062,14 +1063,41 @@
         }
 
         function startPayment() {
-            // This will be replaced with real Stripe integration
-            alert('🔗 Connecting to Stripe...\n\n💳 Processing payment for $49/month subscription\n⚡ Immediate access after payment\n\nRedirecting to secure checkout...');
+            // Get form data from sign-up modal
+            const signUpModal = document.getElementById('signUpModal');
+            const firstName = signUpModal.querySelector('input[type="text"]').value || 'Demo';
+            const lastName = signUpModal.querySelectorAll('input[type="text"]')[1]?.value || 'User';
+            const company = signUpModal.querySelector('input[placeholder="Acme Corp"]')?.value || 'Demo Company';
+            const email = signUpModal.querySelector('input[type="email"]')?.value || 'demo@example.com';
             
-            // Simulate successful payment
-            setTimeout(() => {
-                hideModal('payment');
-                signIn();
-            }, 1000);
+            // Call real Stripe checkout
+            fetch('/.netlify/functions/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    customer_name: `${firstName} ${lastName}`,
+                    customer_email: email,
+                    company: company
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.sessionId) {
+                    // Redirect to Stripe Checkout
+                    const stripe = Stripe('pk_test_51RqLYw20qgAtFe5auGAOj0wVTlGUlHoE8CYdkObCZVnN7PkfHQ8fKTZFRBBLDnMQvNfZeHPfnLdnlVfDhkmdYn2Q00l0sGp9pI');
+                    return stripe.redirectToCheckout({
+                        sessionId: data.sessionId
+                    });
+                } else {
+                    alert('Error creating checkout session. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Payment error. Please try again.');
+            });
         }
         
         function handleFileUpload(file) {
