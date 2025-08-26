@@ -75,6 +75,15 @@
             background-color: #6366f1;
             color: white;
         }
+        
+        .retention-badge {
+            background: linear-gradient(45deg, #f59e0b, #d97706);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -116,9 +125,10 @@
                         Try Interactive Demo
                     </button>
                     <a href="https://buy.stripe.com/eN17kb6yRnkScEE3jg00" target="_blank" class="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-indigo-600 transition-colors inline-block text-center">
-                        Subscribe Now
+                        Subscribe Now - Immediate Access
                     </a>
                 </div>
+                <p class="text-indigo-200 mt-4 text-sm">$49/month • Cancel anytime • No setup fees</p>
             </div>
         </section>
 
@@ -248,8 +258,9 @@
                     
                     <div class="mt-8 text-center">
                         <a href="https://buy.stripe.com/eN17kb6yRnkScEE3jg00" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-colors inline-block">
-                            Get Full Analysis - Subscribe Now ($49/month)
+                            Subscribe Now - Immediate Access ($49/month)
                         </a>
+                        <p class="text-gray-500 mt-2 text-sm">Cancel anytime • No setup fees • 5 team members included</p>
                     </div>
                 </div>
             </div>
@@ -293,6 +304,12 @@
                                     <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mr-3">
                                         <span class="text-white text-xs">✓</span>
                                     </span>
+                                    30-day contract retention
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                                        <span class="text-white text-xs">✓</span>
+                                    </span>
                                     Team notifications & collaboration
                                 </li>
                                 <li class="flex items-center">
@@ -304,8 +321,9 @@
                             </ul>
                             
                             <a href="https://buy.stripe.com/eN17kb6yRnkScEE3jg00" target="_blank" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors inline-block text-center">
-                                Subscribe Now - $49/month
+                                Subscribe Now - Immediate Access
                             </a>
+                            <p class="text-gray-500 mt-3 text-sm">Cancel anytime • No setup fees</p>
                         </div>
                     </div>
                 </div>
@@ -388,8 +406,9 @@
                         <div class="bg-white p-6 rounded-lg shadow">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm font-medium text-gray-600">Total Contracts</p>
-                                    <p class="text-3xl font-bold text-gray-900">24</p>
+                                    <p class="text-sm font-medium text-gray-600">Active Contracts</p>
+                                    <p class="text-3xl font-bold text-gray-900">18</p>
+                                    <p class="text-xs text-gray-500 mt-1">6 expiring within 30 days</p>
                                 </div>
                                 <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
                                     <span class="text-indigo-600">📄</span>
@@ -402,6 +421,7 @@
                                 <div>
                                     <p class="text-sm font-medium text-gray-600">Total Value</p>
                                     <p class="text-3xl font-bold text-gray-900">$2.4M</p>
+                                    <p class="text-xs text-gray-500 mt-1">Across all active contracts</p>
                                 </div>
                                 <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                                     <span class="text-green-600">💰</span>
@@ -414,6 +434,7 @@
                                 <div>
                                     <p class="text-sm font-medium text-gray-600">High Risk</p>
                                     <p class="text-3xl font-bold text-gray-900">3</p>
+                                    <p class="text-xs text-gray-500 mt-1">Require immediate attention</p>
                                 </div>
                                 <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
                                     <span class="text-red-600">⚠️</span>
@@ -424,20 +445,22 @@
                         <div class="bg-white p-6 rounded-lg shadow">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm font-medium text-gray-600">Expiring Soon</p>
-                                    <p class="text-3xl font-bold text-gray-900">7</p>
+                                    <p class="text-sm font-medium text-gray-600">30-Day Retention</p>
+                                    <p class="text-3xl font-bold text-gray-900">47</p>
+                                    <p class="text-xs text-gray-500 mt-1">Contracts stored (auto-delete)</p>
                                 </div>
                                 <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                                    <span class="text-yellow-600">⏰</span>
+                                    <span class="text-yellow-600">🗂️</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Recent Contracts -->
+                    <!-- Recent Contracts with 30-day retention display -->
                     <div class="bg-white rounded-lg shadow">
-                        <div class="px-6 py-4 border-b">
+                        <div class="px-6 py-4 border-b flex justify-between items-center">
                             <h2 class="text-lg font-semibold">Recent Contracts</h2>
+                            <span class="text-sm text-gray-500">Contracts auto-delete after 30 days</span>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full">
@@ -447,13 +470,14 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Risk Level</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Expiry</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Days Left</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="font-medium text-gray-900">Service Agreement - ABC Corp</div>
+                                            <div class="text-sm text-gray-500">Uploaded 2 days ago</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Complete</span>
@@ -462,11 +486,14 @@
                                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Medium</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-gray-900">$240,000</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">Dec 2025</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="retention-badge">28 days</span>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="font-medium text-gray-900">Software License - XYZ Inc</div>
+                                            <div class="text-sm text-gray-500">Uploaded 5 days ago</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Processing</span>
@@ -475,7 +502,41 @@
                                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Low</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-gray-900">$150,000</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">Mar 2026</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="retention-badge">25 days</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-900">Consulting Agreement - TechStart</div>
+                                            <div class="text-sm text-gray-500">Uploaded 12 days ago</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Complete</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">High</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-900">$85,000</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="retention-badge">18 days</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-900">NDA - GlobalCorp</div>
+                                            <div class="text-sm text-gray-500">Uploaded 28 days ago</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Complete</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Low</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-900">--</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full font-semibold">2 days</span>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -488,20 +549,35 @@
                     <div class="mb-8 flex justify-between items-center">
                         <div>
                             <h1 class="text-2xl font-bold text-gray-900">Contract Management</h1>
-                            <p class="text-gray-600">Upload and analyze contracts</p>
+                            <p class="text-gray-600">Upload and analyze contracts • 30-day automatic retention</p>
                         </div>
                         <button id="uploadBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold">
                             Upload New Contract
                         </button>
                     </div>
                     
-                    <div class="bg-white rounded-lg shadow p-6">
+                    <div class="bg-white rounded-lg shadow p-6 mb-6">
                         <input id="fileInput" type="file" class="hidden" accept=".pdf,.doc,.docx">
                         <div id="uploadZone" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-500 transition-colors cursor-pointer">
                             <div class="text-4xl mb-4">📄</div>
                             <h3 class="text-lg font-semibold mb-2">Upload Contract for Analysis</h3>
                             <p class="text-gray-600 mb-4">Drag and drop your contract or click to browse</p>
                             <p class="text-sm text-gray-500">Supports PDF, DOC, and DOCX files</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Contract Retention Info -->
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <span class="text-blue-400 text-lg">ℹ️</span>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-blue-800">30-Day Contract Retention Policy</h3>
+                                <div class="mt-1 text-sm text-blue-700">
+                                    <p>All uploaded contracts are automatically deleted after 30 days for your security and privacy. Download analysis results before expiration.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -555,12 +631,28 @@
                     <div class="space-y-6">
                         <div class="bg-white rounded-lg shadow p-6">
                             <h2 class="text-lg font-semibold mb-4">Subscription</h2>
-                            <div class="flex justify-between items-center">
+                            <div class="flex justify-between items-center mb-4">
                                 <div>
                                     <p class="font-medium">Team Plan</p>
                                     <p class="text-sm text-gray-500">$49/month - Up to 5 team members</p>
                                 </div>
                                 <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">Active</span>
+                            </div>
+                            <div class="text-sm text-gray-600 space-y-1">
+                                <p>✓ Cancel anytime - no contracts or commitments</p>
+                                <p>✓ Immediate access to all features</p>
+                                <p>✓ 30-day contract retention included</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h2 class="text-lg font-semibold mb-4">Data Retention Settings</h2>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                                    <span>Contract Auto-Delete</span>
+                                    <span class="text-sm text-indigo-600 font-semibold">30 days</span>
+                                </div>
+                                <p class="text-sm text-gray-600">All uploaded contracts are automatically deleted after 30 days for security and privacy.</p>
                             </div>
                         </div>
                         
@@ -574,6 +666,10 @@
                                 <label class="flex items-center">
                                     <input type="checkbox" class="rounded" checked>
                                     <span class="ml-2">Notify team when new contract uploaded</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded" checked>
+                                    <span class="ml-2">Alert 3 days before contract deletion</span>
                                 </label>
                                 <label class="flex items-center">
                                     <input type="checkbox" class="rounded">
