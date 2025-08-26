@@ -8,7 +8,7 @@ exports.handler = async (event, context) => {
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
-
+// Updated environment variable - test
   // Handle preflight OPTIONS request
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -113,3 +113,4 @@ exports.handler = async (event, context) => {
     };
   }
 };
+
