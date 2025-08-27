@@ -849,12 +849,12 @@
     </div>
 
     <script>
-        // Supabase Configuration - Replace with your actual keys
-        const SUPABASE_URL = 'https://ugpetfrmipzsjibhezrq.supabase.co'  // Your actual project URL
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVncGV0ZnJtaXB6c2ppYmhlenJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4Nzg5MjYsImV4cCI6MjA3MTQ1NDkyNn0._NUdCXEqf5PexE9b4ifK_ya0eQp2p3kGP5VxeQCLyYs"
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://ugpetfrmipzsjibhezrq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVncGV0ZnJtaXB6c2ppYmhlenJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4Nzg5MjYsImV4cCI6MjA3MTQ1NDkyNn0._NUdCXEqf5PexE9b4ifK_ya0eQp2p3kGP5VxeQCLyYs';
         
         // Initialize Supabase client
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         console.log('Contract Navigator loaded successfully');
         
@@ -862,13 +862,13 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
         checkAuthState();
         
         async function checkAuthState() {
-            const { data: { user } } = await supabase.auth.getUser()
+            const { data: { user } } = await supabase.auth.getUser();
             if (user) {
                 showDashboard();
             }
         }
         
-        // Navigation
+        // Get DOM elements
         const tryDemoBtn = document.getElementById('tryDemoBtn');
         const signupBtn = document.getElementById('signupBtn');
         const loginBtn = document.getElementById('loginBtn');
@@ -933,69 +933,75 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
         }
         
         // Event listeners
-        tryDemoBtn.addEventListener('click', startDemo);
-        signupBtn.addEventListener('click', () => signupModal.classList.add('active'));
-        loginBtn.addEventListener('click', () => loginModal.classList.add('active'));
-        logoutBtn.addEventListener('click', handleLogout);
-        closeDemoBtn.addEventListener('click', () => demoModal.classList.remove('active'));
-        closeSignupBtn.addEventListener('click', () => signupModal.classList.remove('active'));
-        closeLoginBtn.addEventListener('click', () => loginModal.classList.remove('active'));
-        switchToSignupBtn.addEventListener('click', () => {
+        if (tryDemoBtn) tryDemoBtn.addEventListener('click', startDemo);
+        if (signupBtn) signupBtn.addEventListener('click', () => signupModal.classList.add('active'));
+        if (loginBtn) loginBtn.addEventListener('click', () => loginModal.classList.add('active'));
+        if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+        if (closeDemoBtn) closeDemoBtn.addEventListener('click', () => demoModal.classList.remove('active'));
+        if (closeSignupBtn) closeSignupBtn.addEventListener('click', () => signupModal.classList.remove('active'));
+        if (closeLoginBtn) closeLoginBtn.addEventListener('click', () => loginModal.classList.remove('active'));
+        if (switchToSignupBtn) switchToSignupBtn.addEventListener('click', () => {
             loginModal.classList.remove('active');
             signupModal.classList.add('active');
         });
-        viewResultsBtn.addEventListener('click', showResults);
+        if (viewResultsBtn) viewResultsBtn.addEventListener('click', showResults);
         
         // Signup form handler
-        document.getElementById('signupForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = {
-                fullName: document.getElementById('fullName').value,
-                email: document.getElementById('email').value,
-                company: document.getElementById('company').value
-            };
-            
-            // Store form data for post-payment account creation
-            localStorage.setItem('pendingSignup', JSON.stringify(formData));
-            
-            // Show payment processing message
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            submitBtn.innerHTML = 'Redirecting to payment...';
-            
-            // Redirect to Stripe payment
-            setTimeout(() => {
-                window.location.href = 'https://buy.stripe.com/cNi7sDdyNfuHdSccUEbjW00';
-            }, 500);
-        });
+        const signupForm = document.getElementById('signupForm');
+        if (signupForm) {
+            signupForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = {
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    company: document.getElementById('company').value
+                };
+                
+                // Store form data for post-payment account creation
+                localStorage.setItem('pendingSignup', JSON.stringify(formData));
+                
+                // Show payment processing message
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = 'Redirecting to payment...';
+                
+                // Redirect to Stripe payment
+                setTimeout(() => {
+                    window.location.href = 'https://buy.stripe.com/cNi7sDdyNfuHdSccUEbjW00';
+                }, 500);
+            });
+        }
         
-        // Login form handler with Supabase authentication
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            submitBtn.innerHTML = 'Signing in...';
-            
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
+        // Login form handler
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
                 
-                if (error) {
-                    throw error;
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = 'Signing in...';
+                
+                try {
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    
+                    if (error) {
+                        throw error;
+                    }
+                    
+                    // Success - close modal and show dashboard
+                    loginModal.classList.remove('active');
+                    showDashboard();
+                    
+                } catch (error) {
+                    alert('Login failed: ' + error.message);
+                    submitBtn.innerHTML = 'Sign In';
                 }
-                
-                // Success - close modal and show dashboard
-                loginModal.classList.remove('active');
-                showDashboard();
-                
-            } catch (error) {
-                alert('Login failed: ' + error.message);
-                submitBtn.innerHTML = 'Sign In';
-            }
-        });
+            });
+        }
         
         // Handle payment success and account creation
         async function handlePaymentSuccess() {
@@ -1093,7 +1099,7 @@ Please save these credentials and consider changing your password in settings.`)
                 showHomepage();
             } catch (error) {
                 console.error('Logout error:', error);
-                showHomepage(); // Show homepage anyway
+                showHomepage();
             }
         }
         
@@ -1115,7 +1121,10 @@ Please save these credentials and consider changing your password in settings.`)
                 
                 // Show selected content
                 const section = this.dataset.section;
-                document.getElementById(section + 'Content').classList.add('active');
+                const sectionContent = document.getElementById(section + 'Content');
+                if (sectionContent) {
+                    sectionContent.classList.add('active');
+                }
             });
         });
         
@@ -1124,43 +1133,49 @@ Please save these credentials and consider changing your password in settings.`)
         const uploadBtn = document.getElementById('uploadBtn');
         const uploadZone = document.getElementById('uploadZone');
         
-        uploadBtn.addEventListener('click', () => fileInput.click());
-        uploadZone.addEventListener('click', () => fileInput.click());
+        if (uploadBtn && fileInput) {
+            uploadBtn.addEventListener('click', () => fileInput.click());
+        }
         
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                // Simulate file upload and analysis
-                uploadZone.innerHTML = `
-                    <div class="text-4xl mb-4">⏳</div>
-                    <h3 class="text-lg font-semibold mb-2">Processing ${file.name}</h3>
-                    <p class="text-gray-600 mb-4">Analysis in progress...</p>
-                `;
-                
-                setTimeout(() => {
+        if (uploadZone && fileInput) {
+            uploadZone.addEventListener('click', () => fileInput.click());
+        }
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Simulate file upload and analysis
                     uploadZone.innerHTML = `
-                        <div class="text-4xl mb-4">✅</div>
-                        <h3 class="text-lg font-semibold mb-2">Analysis Complete!</h3>
-                        <p class="text-gray-600 mb-4">${file.name} has been analyzed</p>
-                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg">
-                            View Results
-                        </button>
+                        <div class="text-4xl mb-4">⏳</div>
+                        <h3 class="text-lg font-semibold mb-2">Processing ${file.name}</h3>
+                        <p class="text-gray-600 mb-4">Analysis in progress...</p>
                     `;
-                }, 3000);
-            }
-        });
+                    
+                    setTimeout(() => {
+                        uploadZone.innerHTML = `
+                            <div class="text-4xl mb-4">✅</div>
+                            <h3 class="text-lg font-semibold mb-2">Analysis Complete!</h3>
+                            <p class="text-gray-600 mb-4">${file.name} has been analyzed</p>
+                            <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg">
+                                View Results
+                            </button>
+                        `;
+                    }, 3000);
+                }
+            });
+        }
         
         // Team invite functionality
         const inviteBtn = document.getElementById('inviteBtn');
-        inviteBtn.addEventListener('click', function() {
-            const email = prompt('Enter team member email:');
-            if (email && email.includes('@')) {
-                alert(`Invitation sent to ${email}`);
-            }
-        });
+        if (inviteBtn) {
+            inviteBtn.addEventListener('click', function() {
+                const email = prompt('Enter team member email:');
+                if (email && email.includes('@')) {
+                    alert(`Invitation sent to ${email}`);
+                }
+            });
+        }
     </script>
 </body>
 </html>
-
-
-
